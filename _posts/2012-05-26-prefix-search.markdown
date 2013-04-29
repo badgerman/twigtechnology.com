@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Prefix Search, Part 2: crit-bit trees"
-date: 2012-05-28 08:35:33
+date: 2012-05-26 08:35:33
 comments: true
 categories: [kata, code, algorithms]
 ---
