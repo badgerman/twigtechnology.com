@@ -17,6 +17,7 @@ station, I feel like I gave a lot of kids the gift of game-making to take home,
 and feedback was positive. Stencyl got mentioned as a highlight in quite a lot
 of our feedback forms.
 
+<!-- more -->
 What really worked was knowing the tool that I was teaching, and having a plan
 for how to introduce the kids to it. Stencyl is a game programming framework,
 but I figured out that "game" is the fun part of that, and "programming" is more
