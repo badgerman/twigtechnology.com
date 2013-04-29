@@ -13,6 +13,6 @@ advertising with Anarchy Online, and it was one piece of the puzzle that makes
 smaller titles possible and keeps them profitable.
 
 <!-- more -->
-I wonder what this means for Anarchy Online’s Free-To-Play program? In-Game
+I wonder what this means for Anarchy Online's Free-To-Play program? In-Game
 advertising was a significant revenue stream I believe. Well, maybe Funcom will
 sell the advertising boards themselves. I say put lolcats on all of them!

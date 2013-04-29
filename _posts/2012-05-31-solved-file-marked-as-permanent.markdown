@@ -6,8 +6,8 @@ comments: true
 categories: [music, software, howto]
 ---
 Google Music has this annoying problem where it will sometimes barf on your MP3
-files with the error message you see above. And it won’t tell you what’s wrong,
-either. The internet doesn’t know, either.
+files with the error message you see above. And it won't tell you what's wrong,
+either. The internet doesn't know, either.
 
 <!-- more -->
 So I set out to take those unprocessed files and apply any change to them I
@@ -20,6 +20,6 @@ knife of a music player), and perform "right click on the file -> Utilities ->
 Fix VBR MP3 header". After you rewrite the file, Music Manager will detect that
 it has changed, find it to be no longer broken, and upload it.
 
-You’ll want to open up `%LOCALAPPDATA%\Google\MusicManager\FailureReport.txt` and
+You'll want to open up `%LOCALAPPDATA%\Google\MusicManager\FailureReport.txt` and
 scan this for all the files that MusicManager complained about, then fix the MBR
 headers on those. 
