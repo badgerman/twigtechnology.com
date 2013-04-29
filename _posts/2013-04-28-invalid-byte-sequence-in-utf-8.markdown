@@ -12,6 +12,7 @@ importing some old blog posts, I got this gem of an error message:
     YAML Exception reading 2012-05-28-prefix-search.markdown: invalid byte
     sequence in UTF-8
 
+<!-- more -->
 That's surprisingly useless when you're not telling me what line it's
 on! The ruby callstack also does nothing! There is literally no other
 way to fix this than to bisect the blog post and rebuild the blog

@@ -11,6 +11,7 @@ all the ones that begin with a given prefix. For example, say you have a phone
 book, and you want to find all the people whose name starts with Joe. Or a large
 list of IP addresses, and you want to find all the ones that start with 192.168.
 
+<!-- more -->
 This is a fun problem, because I don't think any popular programming languages
 have good data structures to do this. Let me know if I'm wrong, but I can't
 think of a naive way to implement this in Javascript or with the STL in C++.

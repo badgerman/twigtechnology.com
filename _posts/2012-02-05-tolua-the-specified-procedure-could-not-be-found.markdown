@@ -12,7 +12,8 @@ tolua++, and I ran into this error message:
 
         The specified procedure could not be found.
 
-That looks like my DLL isn.t exporting the luaopen_foo
+<!-- more -->
+That looks like my DLL is not exporting the luaopen_foo
 function correctly. That is the function lua calls to initialize the
 package it just opened, and tolua++ was not declaring it properly:
 

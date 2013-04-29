@@ -9,6 +9,7 @@ In my last post, I demonstrated that crit-bit trees are really fast. This time,
 I want to talk a little bit about my specific implementation of these tries, and
 some interesting applications you can use them for.
 
+<!-- more -->
 I also want to acknowledge some of the prior art that I looked at before
 deciding to roll my own implementation. Professor Bernstein himself has written
 an implementation himself for his portable qhasm assembler. But since it's part

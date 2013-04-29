@@ -14,6 +14,7 @@ linked list][http://en.wikipedia.org/wiki/Unrolled_linked_list
 CuTest unit testing framework and do some test-first
 development.
 
+<!-- more -->
 The result is rather nice, testing actually found a small bug,
 despite the fact that I was sure can do linked lists in my sleep, and
 I was so pleased with the performance characteristics (better cache

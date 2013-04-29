@@ -11,6 +11,7 @@ with. There certainly isn't one in C. But the good news is that we get to build
 our own! How often do we still get to write data structures from scratch in this
 day and age? And when is it ever a good idea?
 
+<!-- more -->
 Of course, you should always try to go with the simplest thing that works: In my
 case, that's building an array of your million strings, and to search for a
 prefix, just strncmp each entry. We'll benchmark that, see how well it performs,
