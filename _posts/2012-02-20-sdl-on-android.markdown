@@ -17,15 +17,15 @@ The first piece of bad news is that Android support is only in the upcoming SDL
 SDL2 is pretty similar, so I decided to upgrade. The README.android file does a
 pretty good job of explaining the steps, but there were a few kinks:
 
-1. in jni/src/Android.mk, the line LOCAL_SHARED_LIBRARIES := SDL is wrong. That
+1. in jni/src/Android.mk, the line LOCAL_SHARED_LIBRARIES := SDL is wrong. That
    needs to be SDL2
 2. Java didn't like that all the classes in src/org/libsdl/app/SDLActivity.java
    are in one file. I had to make separate SDLMain.java and SDLSurface.java files.
 3. In the onTouch method, I get a compile error (cannot find symbol)
-   for event.getActionIndex() and event.getActionMasked(), so I commented out some
+   for event.getActionIndex() and event.getActionMasked(), so I commented out some
    of that code and haven't used touch events yet. I still need to crack this nut.
 4. Because my SDK is installed in C:\Google\android-sdk-windows, I had to edit
-   local.properties to say sdk.dir=/Google/android-sdk-windows
+   local.properties to say `sdk.dir=/Google/android-sdk-windows`
 
 Now I have one of the SDL test app running on my phone, drawing rectangles. Time
 to see if I can do something useful with that!
