@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Prefix search, Part 3 / more fun with tries"
+title: "Prefix search, Part 3: more fun with tries"
 date: 2012-05-28 14:49:49
 comments: true
 categories: [kata, code, algorithms]
@@ -24,10 +24,12 @@ bit-mask trick from it.
 While they are really good at string lookup, what crit-bit trees are best at is
 finding strings with a common prefix. I implemented two separate functions for
 this:
-
-    const void * cb_find(critbit_tree * cb, const void * key, size_t keylen);
-    int cb_foreach(critbit_tree * cb, const void * key, size_t keylen, int (*match_cb)(const void * match, const void * key, size_t keylen, void *), void *data);
-
+{% codeblock lang:c %}
+const void * cb_find(critbit_tree * cb, const void * key, size_t keylen);
+int cb_foreach(critbit_tree * cb, const void * key, size_t keylen,
+    int (*match_cb)(const void * match, const void * key, size_t keylen,
+    void *), void *data);
+{% endcodeblock %}
 The first function is straightforward, it looks for an exact match of the first
 `keylen` bytes of `key` in the given tree. The second function
 calls the `match_cb` callback on every match, which is a much easier
@@ -45,19 +47,19 @@ the tree and look for the first match with the prefix "config_value=". There are
 two wrapper macros in critbit.h to simplify this, and being able to store data
 other than zero-terminated strings means I am not limited to storing string
 values. Here's some example code that shows their use:
+{% codeblock lang:c %}
+int i = 42;
+char buffer[20];
+const char * key = "herpderp";
+void * match;
+size_t len;
 
-    int i = 42;
-    char buffer[20];
-    const char * key = "herpderp";
-    void * match;
-    size_t len;
-    
-    len = cb_new_kv(key, strlen(key), &i, sizeof(int), buffer);
-    cb_insert(&cb, buffer, len);
-    if (cb_find_prefix(&cb, key, strlen(key)+1, &match, 1, 0)) {
-        cb_get_kv(match, &i, sizeof(int));
-    }
-
+len = cb_new_kv(key, strlen(key), &i, sizeof(int), buffer);
+cb_insert(&cb, buffer, len);
+if (cb_find_prefix(&cb, key, strlen(key)+1, &match, 1, 0)) {
+    cb_get_kv(match, &i, sizeof(int));
+}
+{% endcodeblock %}
 What these macros essentially do is this:
 
 1. `cb_new_kv` creates a (key,0,value) string inside buffer.
