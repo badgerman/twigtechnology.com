@@ -17,10 +17,11 @@ That looks like my DLL is not exporting the luaopen_foo
 function correctly. That is the function lua calls to initialize the
 package it just opened, and tolua++ was not declaring it properly:
 
-    TOLUA_API int luaopen_foo (lua_State* tolua_S) {
-        return tolua_foo_open(tolua_S);
-    };
-  
+{% codeblock lang:c %}
+TOLUA_API int luaopen_foo (lua_State *tolua_S) {
+    return tolua_foo_open(tolua_S);
+};
+{% endcodeblock %}
 TOLUA_API is defined toextern, which doesn.t mean that it will be
 exported by the DLL, because on windows, the magic incantation for
 that is__declspec(dllexport). The tolua++ header has no special
@@ -31,13 +32,14 @@ Once the problem is understood, the solution is easy: I added another
 function to dllmain.cpp that has the correct export declaration and
 calls the generated one.
 
-    extern "C" {
-        int tolua_bar_open(lua_State*);
-        int __declspec(dllexport) luaopen_foo (lua_State* L) {
-            return tolua_bar_open(L);
-        };
-    }
-          
+{% codeblock lang:c %}
+extern "C" {
+    int tolua_bar_open(lua_State *);
+    int __declspec(dllexport) luaopen_foo (lua_State *L) {
+        return tolua_bar_open(L);
+    };
+}
+{% endcodeblock %}      
 There is one caveat, because tolua++ has already created a
 function named luaopen_foo, so I had to tell it to name things
 differently, for which there is a command-line argument:

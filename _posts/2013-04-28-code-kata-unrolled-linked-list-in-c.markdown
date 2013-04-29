@@ -23,20 +23,21 @@ Eressea with it.
 
 ## Code Sample
 
-    quicklist *q, *ql = 0;
-    int i;
-    // insert element at index:
-    ql_insert(ql, 0, foo);
-    ql_insert(ql, 0, bar);
-    assert(ql_get(ql, 1)==foo);
-    assert(ql_length(ql)==2);
-    // push element at end, get indexed element:
-    ql_push(ql, baz);
-    assert(ql_get(ql, 2)==baz);
-    // iterate over list:
-    for (q=ql,i=0;q;ql_advance(&amp;ql, &amp;i, 1)) {
-        printf("%p ", ql_get(q, i));
-    }
-
+{% codeblock lang:c %}
+quicklist *q, *ql = 0;
+int i;
+// insert element at index:
+ql_insert(ql, 0, foo);
+ql_insert(ql, 0, bar);
+assert(ql_get(ql, 1)==foo);
+assert(ql_length(ql)==2);
+// push element at end, get indexed element:
+ql_push(ql, baz);
+assert(ql_get(ql, 2)==baz);
+// iterate over list:
+for (q=ql,i=0;q;ql_advance(&amp;ql, &amp;i, 1)) {
+    printf("%p ", ql_get(q, i));
+}
+{% endcodeblock %}
 The code is on [github](https://github.com/badgerman/quicklist) for you to
 use as you please.
