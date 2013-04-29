@@ -3,7 +3,7 @@ layout: post
 title: "tolua: The specified procedure could not be found."
 date: 2012-02-05 13:02:00
 comments: true
-categories: 
+categories: [code, lua, tolua]
 ---
 Today I was going to make a tiny DLL that binds some C code with
 tolua++, and I ran into this error message:
