@@ -14,8 +14,8 @@ folders with my phone, and synchronize photos taken with the phone to my PC.
 
 ## Sharing Folders with my Phone
 
-There are [inofficial ways](https://matt.bionicmessage.net/blog/2013/04/27/Running%20BitTorrent%20Sync%20on%20your%20(rooted)%20Android%20device)
-of getting btssync to run on Android devices, but I'm trying to solve
+There are [inofficial ways](https://matt.bionicmessage.net/blog/2013/04/27/Running%20BitTorrent%20Sync%20on%20your%20\(rooted\)%20Android%20device)
+of getting btsync to run on Android devices, but I'm trying to solve
 this problem without rooting the phone, and anyhow, the bittorrent
 protocol would be insane to run on my data plan. My current solution is
 a hybrid: I am creating a *Phone* folder in my Dropbox that gets synced
@@ -27,7 +27,7 @@ the folder on any PC, even one that does not have Dropbox installed,
 is transferred to the phone.
 
 In my setup, I have a Desktop PC that is (almost) always on, a Laptop
-that doesn't have Dropbox installed, and an Android phone runnign the
+that doesn't have Dropbox installed, and an Android phone running the
 Dropbox app. This is what is going on:
 {% img left /images/btsyncdb.png 594 514 %}
 

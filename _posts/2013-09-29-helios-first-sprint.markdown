@@ -14,7 +14,7 @@ end of my very first sprint, and I am pretty stoked about how much I got done.
 
 ## Project planning
 
-In agile development, the project gets broken down to sprints, intervals of time
+In agile development, the project gets broken down to sprints -- intervals of time
 that are easy to plan for. In my case, I am planning to do a print per month,
 because it forces me to prepare a ton of design work, and because my time is
 easier to predict for a month than a week. I think I can commit to 5 full days
@@ -41,20 +41,21 @@ This gives me material for all my future sprints until the start of the game.
 
 The core feature I worked on for first was the most difficult one. I believe in
 addressing risk head-on, so I worked on multi-hex movement for ships. Talking to
-the atlantisdev folks helped me narrow the scope to only ships, whcih don't have
+the atlantisdev folks helped me narrow the scope to only ships, which don't have
 to worry about guards, terrain modifiers, and other complications to the source.
 I also decided to delay the new action system I have planned, and in the end it
 turned out to actually be pretty straightforward.
 
 I got a lot of other small and large things shipped. My other focus was making
 more things configurable on a per-game basis, by moving them into the json
-configration file:
+configuration file:
+
 * players start with 10 men and $2000, which are configurable values.
-* the width/height of the map is cunfigurable, but stays fixed after world
+* the width/height of the map is configurable, but stays fixed after world
   generation, and does not need to be recalculated every time the data file is
   loaded.
 * Regions have a unique id, and the neighbor-graph of all regions is stored in
-  the data file, which makes coordinates a merely cosmetic atttribute of a
+  the data file, which makes coordinates a merely cosmetic attribute of a
   region. They are no longer needed to rebuild the region::connect array.
 * All regions are stored in a hash table, so they are fast to look up if you
   know their unique ID.
@@ -87,5 +88,5 @@ Atlantis developments, even just as a lurker, I want to talk to you.
 Investigating ALH helped me get some ideas about world coordinates sorted out,
 realizing that the code didn't need them, and as long as the client can draw a
 map, neither do the players. I am probably going to let players choose how they
-want them layed out on a per-faction basis, with a default preference for the
+want them laid out on a per-faction basis, with a default preference for the
 ALH layout.
