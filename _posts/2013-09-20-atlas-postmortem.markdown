@@ -23,9 +23,9 @@ Wallace first created it.
 4.  Kept a regular schedule, the automatic turns worked (almost) every weekend.
 5.  Few serious bugs: I had to re-run only 2 turns.
 6.  Hex maps: major new feature that didn't break.
-7.  JSON for reports: One player wrote a Javascript mapping tool, and I wrote an order-template generator.
+7.  JSON for reports: One player wrote a JavaScript mapping tool, and I wrote an order-template generator.
 8.  I killed the TEACH command, which reduced a ton of micro-optimization.
-9.  open-source game meant I was getting bugreports from people who read the code!
+9.  open-source game meant I was getting bug reports from people who read the code!
 
 ## What didn't work
 
@@ -36,7 +36,7 @@ Wallace first created it.
 4.  The world in general was too big: I spawned three hexes per player, but in
     the endgame, my faction is spread over two dozen hexes. Player drop-off really,
     really hurts.
-5.  All regions are exchangable, and mostly the same. I recruit peons in every
+5.  All regions are exchangeable, and mostly the same. I recruit peons in every
     region, I tax as much as I can, and I build longbows/ships in forests vs.
     swords/armor in mountains. There is no strategic component to terrain at all.
     Why are swamps even in the game?
@@ -146,7 +146,7 @@ like to work with check these requirements:
     milestones, and developers should play in those games to see what works and what
     doesn't.
 *   Basic computer skills. Must be able to set up their own development machine,
-    know how to use irc, ssh, git and a compiler.
+    know how to use IRC, ssh, git and a compiler.
 *   Must be able to spell and form complete sentences. It's sad that this needs
     to be said, but this is the world we live in.
 
