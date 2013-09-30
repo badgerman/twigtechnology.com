@@ -3,7 +3,7 @@ layout: post
 title: "Helios, first sprint retrospective"
 date: 2013-09-29 20:51:35
 comments: true
-categories: [atlantis, code, production]
+categories: [atlantis, games, production]
 ---
 This month, I started developing a new Atlantis game, code-named Helios. I am
 hoping that other developers will join my effort eventually, so I am spending

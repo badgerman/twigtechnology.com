@@ -3,7 +3,7 @@ layout: post
 title: "Atlas: Postmortem Notes"
 date: 2013-09-20 00:32
 comments: true
-categories: [atlantis, code]
+categories: [atlantis, games]
 ---
 Atlas, my game of Atlantis 1.0 (with small modifications) is finally ending in
 turn 22, by vote of the remaining players. There are 6 factions left, and it's
@@ -13,7 +13,7 @@ retrospective of past games, and think it might be constructive to do a
 write-up. I know a lot of this is fixed in A5 or Eressea, but remember I wanted
 to go back to basics and see what the world was like 20 years ago when Russell
 Wallace first created it.
-
+<!-- more -->
 ## What worked
 
 1.  The game runs smoothly on all three types of machines I used: Windows (x64),
