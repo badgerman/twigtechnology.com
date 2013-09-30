@@ -136,18 +136,18 @@ programmer, or because the baggage of the old game was so big. That experience
 was my main motivation to look at A1 again. Which means the ideal people I would
 like to work with check these requirements:
 
-1.  Programmers. Adding non-programmers to a project increases the chatter, and
+*   Programmers. Adding non-programmers to a project increases the chatter, and
     does not increase actual productivity. Knowing what's possible in the code base
     should inform what features are designed :-)
-2.  Seasoned C programmers. Portable C99 is my favorite language, and the game is
+*   Seasoned C programmers. Portable C99 is my favorite language, and the game is
     always going to be C at its core. I don't like C++ all that much, please do not
     suggest it.
-3.  Atlantis Players. I would still want to run new games upon reaching feature
+*   Atlantis Players. I would still want to run new games upon reaching feature
     milestones, and developers should play in those games to see what works and what
     doesn't.
-4.  Basic computer skills. Must be able to set up their own development machine,
+*   Basic computer skills. Must be able to set up their own development machine,
     know how to use irc, ssh, git and a compiler.
-5.  Must be able to spell and form complete sentences. It's sad that this needs
+*   Must be able to spell and form complete sentences. It's sad that this needs
     to be said, but this is the world we live in.
 
 If you feel that you match this profile, and you have time and energy to work

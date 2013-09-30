@@ -25,8 +25,8 @@ bite-sized tasks which can be finished in less than a day, and assign as many of
 these to the sprint as I think are possible to finish in a month. Since the
 tasks are small and the design for their user story is complete and written
 down, new contributors should be able to pick up any one of them that they feel
-comfortable working on. For this purpose, I keep my [task board on Trello]
-(https://trello.com/b/EzbIyrUS/new-atlantis) updated.
+comfortable working on. For this purpose, I keep my
+[task board on Trello](https://trello.com/b/EzbIyrUS/new-atlantis) updated.
 
 Even as a single-team developer, this helps me focus on my work. There is
 satisfaction in seeing how many tasks I have moved, and I never wonder what
@@ -34,8 +34,8 @@ needs to be done next, so I don't work on stuff that isn't important.
 
 ## What got done
 
-I have planned an aggressive [list of features]
-(https://github.com/badgerman/atlantis/wiki/Helios-Game-Design-Document)
+I have planned an aggressive
+[list of features](https://github.com/badgerman/atlantis/wiki/Helios-Game-Design-Document)
 for Helios, and I wrote Design rationale and a task breakdown for all of them.
 This gives me material for all my future sprints until the start of the game.
 
