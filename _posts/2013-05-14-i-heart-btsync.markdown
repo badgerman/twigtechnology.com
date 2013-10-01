@@ -11,7 +11,7 @@ automatically load photos from my phone onto my computer, and make it
 easy to share files publicly. Who needs USB sticks anymore?
 
 ## Why would I even want to quit Dropbox?
-
+<!-- more -->
 Dropbox comes with some strings attached that I don't like. There
 is no client for my Raspberry Pi, for example. Every file I share is
 also uploaded to the cloud, and while they score 4 out of 5 stars in

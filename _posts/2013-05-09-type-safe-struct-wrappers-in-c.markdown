@@ -13,8 +13,9 @@ typedef void *HBITMAP;
 typedef void *HWINDOW;
 {% endcodeblock %}
 It is then possible to assign a value of type HBITMAP to a variable of type
-HWINDOW, with no complaints from the compiler. Let me write some example code
-here to illustrate:
+HWINDOW, with no complaints from the compiler.
+<!-- more -->
+Let me show you some example code to illustrate:
 {% codeblock lang:c %}
 typedef void *HBITMAP;
 typedef void *HWINDOW;
