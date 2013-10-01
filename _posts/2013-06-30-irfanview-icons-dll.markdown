@@ -11,6 +11,8 @@ windows explorer icons for supported file types through an icons.dll
 file. There is a good explanation of how to make this work [at
 emiliolab](http://emilio.fobby.net/features.php?g=1).
 
+<!-- more -->
+
 ## Windows 7
 
 There are two problems that I had with this explanation on Windows:

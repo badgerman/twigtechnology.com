@@ -12,6 +12,8 @@ there are a few things Dropbox does that BTSync doesn't do out of the
 box. Two of these use-cases are related to mobile devices: I want to share
 folders with my phone, and synchronize photos taken with the phone to my PC.
 
+<!-- more -->
+
 ## Sharing Folders with my Phone
 
 There are [inofficial ways](https://matt.bionicmessage.net/blog/2013/04/27/Running%20BitTorrent%20Sync%20on%20your%20\(rooted\)%20Android%20device)

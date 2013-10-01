@@ -17,6 +17,8 @@ The first piece of bad news is that Android support is only in the upcoming SDL
 SDL2 is pretty similar, so I decided to upgrade. The README.android file does a
 pretty good job of explaining the steps, but there were a few kinks:
 
+<!-- more -->
+
 1. in jni/src/Android.mk, the line LOCAL_SHARED_LIBRARIES := SDL is wrong. That
    needs to be SDL2
 2. Java didn't like that all the classes in src/org/libsdl/app/SDLActivity.java

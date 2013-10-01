@@ -10,6 +10,8 @@ whenever they see it, and I finally have an opinion. It's a nice device,
 overall, but I would not have paid the money for it. There's a place for it in
 my life, albeit a small one.
 
+<!-- more -->
+
 The first thing people say when they pick it up is "this is heavy", and it is
 true that it's heavier than the iPad, but I kinda like it. It feels substantial.
 I have the 4G version without 4G, so I'm only using it on Wireless LAN, which
