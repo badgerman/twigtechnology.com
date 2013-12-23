@@ -12,7 +12,7 @@ curly braces, or the backslash, and I am able to use my coworkers’computers an
 vice versa (except for those Dvorak types). But sometimes, I want to write a
 letter home, and I need the Umlauts and all that other stuff. There are four
 basic solutions to this, all of which don’t work for me, and the final one that
-I use today (skip right to the end if all you want to see is that):
+I use today (skip right to the end if thatis all you want to see).
 
 <!-- more -->
 ## The Windows language bar
