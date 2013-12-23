@@ -17,8 +17,8 @@ From (Wikipedia)[https://en.wikipedia.org/wiki/Eressea_PbeM "Eressea (video game
 > player-populated islands separated by oceans, and players control a growing
 > number of units of a given race to build empires, armies and fleets.
 
-Eressea is derived from (Atlantis)[/atlantis/], and has grown tremendously since
-that time.
+Eressea was originally derived from [Atlantis](/atlantis/), and has grown
+tremendously since that time.
 
 ## The Second Age
 
