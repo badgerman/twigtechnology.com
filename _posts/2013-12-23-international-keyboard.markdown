@@ -14,6 +14,7 @@ letter home, and I need the Umlauts and all that other stuff. There are four
 basic solutions to this, all of which don’t work for me, and the final one that
 I use today (skip right to the end if all you want to see is that):
 
+<!-- more -->
 ## The Windows language bar
 
 I could install three keyboard layouts, and switch between them with the Left
