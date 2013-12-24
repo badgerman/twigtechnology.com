@@ -3,7 +3,8 @@ layout: post
 title: "Using Gmail with Thunderbird"
 date: 2013-12-23 13:00:00
 comments: true
-categories: [howto, gmail, software, email, thunderbird]
+categories: [howto, software, email]
+tags: [gmail, thunderbird]
 published: true
 ---
 I have had it with Gmail. The web interface is becoming more and more

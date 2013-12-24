@@ -3,7 +3,8 @@ layout: post
 title: "Gmail with K-9, and an identity change"
 date: 2013-12-23 19:30:00
 comments: true
-categories: [howto, gmail, software, email, k9, android]
+categories: [howto, software, email, android]
+tags: [gmail, k9, apg]
 published: true
 ---
 In my previous article, I described how to set up Thunderbird for use with your
