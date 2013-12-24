@@ -46,12 +46,12 @@ their account wizard and they will configure the correct IMAP and SMTP server
 for you, with the correct SSL/TLS settings. If you are using two-factor
 authentication (you should!), then this is one of the cases where you need to
 use an
-[application-specific password](https://support.google.com/accounts/answer/185833?hl=en) to access
+[application-specific password](https://support.google.com/accounts/answer/185833) to access
 your Google account. Tell Thunderbird to remember it. You are encrypting your
-harddrive, right?
+hard drive, right?
 
 Next, we need to do some configuration that Thunderbird doesn't get right, in
-order to work around some behavior of Gmail thatisn't like other IMAP servers.
+order to work around some behavior of Gmail that isn't like other IMAP servers.
 Go to the newly created account settings, and configure the following sections:
 
 ### Server Settings
@@ -65,14 +65,14 @@ provides.
 
     When I delete a message: (*) Just mark it as deleted
 
-The GMail server automatically manages its internal Trash folder, and you don't
+The Gmail server automatically manages its internal Trash folder, and you don't
 need to explicitly move deleted messages there.
 
 ### Copies &amp; Folders
 
     When sending messages, automatically [ ] Place a copy in:
     
-Leave this unchecked. GMail's servers will automatically place a copy of every
+Leave this unchecked. Gmail's servers will automatically place a copy of every
 outgoing message into the *Sent Mail* folder, and making another copy will just
 create duplicates, and it really messes up the witless Gmail web interface.
 
