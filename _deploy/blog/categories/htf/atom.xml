@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Htf | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/htf/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[BTSync, Dropbox Alternative]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/05/14/i-heart-btsync/"/>
+    <updated>2013-05-14T08:19:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/05/14/i-heart-btsync</id>
+    <content type="html"><![CDATA[<p>Dropbox is a revolutionary product. It has made it simple for anyone
+to share files between computers, access those files from a phone,
+automatically load photos from my phone onto my computer, and make it
+easy to share files publicly. Who needs USB sticks anymore?</p>
+
+<h2>Why would I even want to quit Dropbox?</h2>
+
+<!-- more -->
+
+
+<p>Dropbox comes with some strings attached that I don&rsquo;t like. There
+is no client for my Raspberry Pi, for example. Every file I share is
+also uploaded to the cloud, and while they score 4 out of 5 stars in
+the <a href="https://www.eff.org/who-has-your-back-2013">EFF&rsquo;s privacy rankings</a>,
+there is no technically enforced guarantee that my data isn&rsquo;t shared
+with others. They have been in the news with
+<a href="http://www.zdnet.com/dropbox-gets-hacked-again-7000001928/">security incidents</a>
+that make it clear files on their service are not encrypted. In fact,
+by the nature of how their software works, they cannot be.</p>
+
+<h2>Bittorrent Sync (BTSync)</h2>
+
+<p><a href="http://labs.bittorrent.com/experiments/sync.html">BTSync</a> is a software that sets up a private swarm of computers that
+share folders between them, just like regular bittorrent clients share
+the files defined in a torrent among them, except that changes in the
+folder are synced, too. It&rsquo;s free, easy to set up, and secure by
+design. There is no cloud server that keeps a copy of all my data, and
+as long as at least one machine in the swarm is reachable, I can sync
+my folder to a new machine. Folders are shared by exchanging a secret
+key, a short alphanumeric string, and computers discover each other
+either on the local LAN or over the internet.</p>
+
+<p>BTSync can share multiple folders, anywhere in the file system (no
+central Dropbox folder here), with different people. I can share the
+baby pictures with Mom and Grandma, travel plans with the rest of my
+group, music with the living room computer, and a public folder with
+my web server, or any other combination.</p>
+
+<h3>Example use: Hack The Future</h3>
+
+<p>For Hack The Future, I have a folder of all the installers for
+software that we mentor. It&rsquo;s shared between the loaner laptops we
+have, but it&rsquo;s easy to share that folder with somebody else, and
+rather than downloading big installers over a museum&rsquo;s slow internet
+connection, the new machine will pull in everything from the local
+network, with the existing computers sharing the load.</p>
+
+<h3>Example use: Raspberry Pi</h3>
+
+<p>I said earlier that my complaint about Dropbox was that there is no
+client for my Raspberry Pi. BTSync has an ARM client, and I use it to
+seed folders that I want to have access to at any time. The Pi is my
+only &ldquo;always on&rdquo; machine, and takes over the role of the Dropbox cloud
+servers.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Stencyl at Hack the Future 6]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/01/16/stencyl-at-htf6/"/>
+    <updated>2013-01-16T11:29:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/01/16/stencyl-at-htf6</id>
+    <content type="html"><![CDATA[<p>Last Sunday saw another installment of our
+<a href="http://hackthefuture.org/" title="Hack The Future">popular children hackathon</a> at the Tech
+Museum in San Jose. We get a room full of middleschool students, pair them with
+hacker mentors, and let them play with all kinds of technology &ndash; programming,
+electronics, robots, that sort of fun stuff.</p>
+
+<p>I had decided that I wanted to show them how to make flash games in &lt;a
+<a href="http://www.stencyl.com/" title="Stencyl">Stencyl</a>. It turned out to be a super popular
+station, I feel like I gave a lot of kids the gift of game-making to take home,
+and feedback was positive. Stencyl got mentioned as a highlight in quite a lot
+of our feedback forms.</p>
+
+<!-- more -->
+
+
+<p>What really worked was knowing the tool that I was teaching, and having a plan
+for how to introduce the kids to it. Stencyl is a game programming framework,
+but I figured out that &ldquo;game&rdquo; is the fun part of that, and &ldquo;programming&rdquo; is more
+of a necessary evil. Except it&rsquo;s not immediately necessary: The secret sauce to
+my table was to use the pre-made example games in Stencyl (particularly the
+run-and-gun game and the angry birds clone), and use them as a basis for
+exploring the possibilities of Stencyl.</p>
+
+<p>Very much like the Pong and Chess Javascript games I&rsquo;d used earlier, this gives
+you a thing that already works: Starting with a single-level Angry Birds game
+gives you something you can play immediately, and because the kids have all
+played it on their phone, they know immediately that it is incomplete and have
+ideas on how it should be made better. And the first steps to making it better
+involve making content, not features: Everyone started building their own levels
+(the built-in physics are fun, that also helps), and eventually got to a point
+that needed a small bit of programming (transitioning from one level to the
+next), so by the time they got in touch with the scratch-like language, it was
+because they wanted to solve a very specific problem, and were already quite
+familiar with how the game was constructed.</p>
+
+<p>This was totally a recipe for making my life easier, too: I had to install the
+game on their computer (bringing a USB stick saved my life), get them started
+with the game and show them the level editor, and they&rsquo;d be self-sufficient for
+the next 30 minutes. I will probably run this station exactly the same way again
+next time. What didn&rsquo;t work well was when the kids wanted to make their own art:
+The built-in image editor is not very good, didn&rsquo;t work at all on Linux, and
+making game art takes a LOT of time during which you&rsquo;re not really learning
+something about making games. I found it was best to steer away from that and
+make them recycle the existing assets in creative ways.</p>
+
+<p>Almost all the kids at my table installed Stencyl on their own computers, and I
+feel positive that they&rsquo;ll work on their game (pun intended) until the next HtF,
+because they clearly had fun. It was great that Stencyl works on Mac, Linux and
+Windows, because I had about equal amounts of each come to my table, and it
+would have been a shame to turn someone away.</p>
+
+<p>Sore point that I want to improve: I didn&rsquo;t get to show anyone how easy it is to
+embed the game they were making on a web page. I think that the ability to share
+their games with friends at school might encourage them even more to keep
+working on their project between events. Finding an easy way to share games is
+something I want to do before Hack the Future 7, which is going to be at the
+Computer History Museum in Mountain View on April 20.</p>
+]]></content>
+  </entry>
+  
+</feed>

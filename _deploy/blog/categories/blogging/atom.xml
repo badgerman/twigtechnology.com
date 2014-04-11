@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Blogging | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/blogging/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Invalid Byte Sequence in UTF-8]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/04/28/invalid-byte-sequence-in-utf-8/"/>
+    <updated>2013-04-28T14:30:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/04/28/invalid-byte-sequence-in-utf-8</id>
+    <content type="html"><![CDATA[<p>I finally made the switch to octopress this week, and when I was
+importing some old blog posts, I got this gem of an error message:</p>
+
+<pre><code>YAML Exception reading 2012-05-28-prefix-search.markdown: invalid byte
+sequence in UTF-8
+</code></pre>
+
+<!-- more -->
+
+
+<p>That&rsquo;s surprisingly useless when you&rsquo;re not telling me what line it&rsquo;s
+on! The ruby callstack also does nothing! There is literally no other
+way to fix this than to bisect the blog post and rebuild the blog
+after each change, which currently takes 80 seconds. After a lot of
+waiting, I finally naoorwed it down to a single unicode \240
+whitespace character that somehow snuck into the text during the
+export from tumblr.</p>
+
+<p>Ruby is not scoring any points in my book today.</p>
+]]></content>
+  </entry>
+  
+</feed>

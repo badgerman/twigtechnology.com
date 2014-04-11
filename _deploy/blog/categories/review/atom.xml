@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Review | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/review/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Motorola XOOM: First Impressions]]></title>
+    <link href="http://www.twigtechnology.com/blog/2011/04/21/motorola-xoom-first-impressions/"/>
+    <updated>2011-04-21T06:00:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2011/04/21/motorola-xoom-first-impressions</id>
+    <content type="html"><![CDATA[<p>Google gave me one of these 10" tablets at GDC. People ask me how I like it
+whenever they see it, and I finally have an opinion. It&rsquo;s a nice device,
+overall, but I would not have paid the money for it. There&rsquo;s a place for it in
+my life, albeit a small one.</p>
+
+<!-- more -->
+
+
+<p>The first thing people say when they pick it up is &ldquo;this is heavy&rdquo;, and it is
+true that it&rsquo;s heavier than the iPad, but I kinda like it. It feels substantial.
+I have the 4G version without 4G, so I&rsquo;m only using it on Wireless LAN, which
+hasn&rsquo;t been a problem, since I don&rsquo;t carry it with me at all times. It&rsquo;s not
+that kind of device.</p>
+
+<p>Best usage scenarios so far:</p>
+
+<ul>
+<li>As a surface for looking at geocaching maps with others and planning a trip.</li>
+<li>As a TV companion to read up on Doctor Who lore.</li>
+<li>As bedside internet, keeping me from getting up in the morning.</li>
+<li>As a mobile phone, thanks to the Skype app.</li>
+</ul>
+
+
+<h2>Pros:</h2>
+
+<ul>
+<li>Android 3.0 is pretty cool. I like the UI of the OS quite a lot.</li>
+<li>The multi-tasking is really working.</li>
+<li>You get used to the idea that apps don&rsquo;t need to be closed after a while.</li>
+<li>It&rsquo;s made my Google Reader unread items count go down a lot.</li>
+<li>I like to keep it next to the bed, because it starts so much faster than a PC coming out of hibernation.</li>
+<li>Google Chat and Google Mail apps are fantastic.</li>
+<li>The HDMI output is great for presentations.</li>
+<li>Battery life is about 2 days with my usage pattern.</li>
+<li>Camera quality is light-years ahead of the iPod camera.</li>
+</ul>
+
+
+<h2>Cons:</h2>
+
+<ul>
+<li>There is no good IRC app.</li>
+<li>It does not charge over USB. I now have yet another charger.</li>
+<li>Some apps don&rsquo;t know how to cope with the screen size (Caltrain!)</li>
+<li>The web browser frequently stops loading things, reboot is the only fix I&rsquo;ve found.</li>
+<li>No netflix app.</li>
+<li>The Skype app doesn&rsquo;t have video.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Industry | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/industry/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Microsoft to Close Massive]]></title>
+    <link href="http://www.twigtechnology.com/blog/2010/10/14/microsoft-to-close-massive/"/>
+    <updated>2010-10-14T17:38:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2010/10/14/microsoft-to-close-massive</id>
+    <content type="html"><![CDATA[<p>I read the news today, oh boy:
+<a href="http://news.bigdownload.com/2010/10/08/report-microsoft-to-shut-down-massive-in-game-ad-division/">Report: Microsoft to shut down Massive in-game ad division</a>
+This is a little upsetting, because we were early adopters of in-game
+advertising with Anarchy Online, and it was one piece of the puzzle that makes
+smaller titles possible and keeps them profitable.</p>
+
+<!-- more -->
+
+
+<p>I wonder what this means for Anarchy Online&rsquo;s Free-To-Play program? In-Game
+advertising was a significant revenue stream I believe. Well, maybe Funcom will
+sell the advertising boards themselves. I say put lolcats on all of them!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Takeaways From Quo Vadis 2008]]></title>
+    <link href="http://www.twigtechnology.com/blog/2008/05/10/takeaways-from-quo-vadis-2008/"/>
+    <updated>2008-05-10T08:52:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2008/05/10/takeaways-from-quo-vadis-2008</id>
+    <content type="html"><![CDATA[<p>I was at <a href="http://www.die-entwicklerkonferenz.de/">Quo Vadis</a> in Berlin earlier this week, and these are some of
+my takeaways:</p>
+
+<ul>
+<li>Everyone loves GTA IV. GTA IV and CoD 4 were the games everyone wished
+they would be making.</li>
+<li><a href="http://www.tibia.com/">CipSoft</a> is probably the most successful
+  unknown German game developer. Tibia is a huge success
+  internationally, with sales that almost everyone else would die for.</li>
+<li>Never eat food from street vendors. My stomach has been in turmoil
+  since Tuesday. The flight home was hell.</li>
+<li>There are still MMORPGs in which you run the risk of a full 24 hours
+  of rollback. Your players are probably a lot more forgiving than you
+  give them credit.</li>
+<li>Germany is missing the boat in online gaming. With the exception of
+  some of <a href="http://www.travian.com/" title="Travian">the</a>
+<a href="http://www.gameforge.de/" title="Gameforge">new</a>
+<a href="http://www.bigpoint.com/" title="Bigpoint">kids</a> who started out as
+  browser games.</li>
+<li>We are still discussing violence. That debate is so last year. Still,
+  Friday saw a panel on the issue of violence in games, but for some
+  reason no mention of the
+<a href="http://www.spiegel.de/netzwelt/web/0,1518,552511,00.html">new legislation</a>
+that passed the same day.</li>
+<li>It&rsquo;s still a very small industry. Germany has about 2,800 people
+  developing games, and nobody is hiring foreign talent or interested in
+  accommodating them. Even companies of 100+ employees still use German
+  as their internal language.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

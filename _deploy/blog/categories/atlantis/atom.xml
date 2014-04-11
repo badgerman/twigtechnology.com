@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Atlantis | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/atlantis/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Helios, First Sprint Retrospective]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/09/29/helios-first-sprint/"/>
+    <updated>2013-09-29T22:51:35+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/09/29/helios-first-sprint</id>
+    <content type="html"><![CDATA[<p>This month, I started developing a new Atlantis game, code-named Helios. I am
+hoping that other developers will join my effort eventually, so I am spending
+more time than usual on project management and documentation. Today sees the
+end of my very first sprint, and I am pretty stoked about how much I got done.</p>
+
+<!-- more -->
+
+
+<h2>Project planning</h2>
+
+<p>In agile development, the project gets broken down to sprints &mdash; intervals of time
+that are easy to plan for. In my case, I am planning to do a print per month,
+because it forces me to prepare a ton of design work, and because my time is
+easier to predict for a month than a week. I think I can commit to 5 full days
+of work during a month while still having a job.</p>
+
+<p>For each of the sprints, I pick a few user stories, break them down to
+bite-sized tasks which can be finished in less than a day, and assign as many of
+these to the sprint as I think are possible to finish in a month. Since the
+tasks are small and the design for their user story is complete and written
+down, new contributors should be able to pick up any one of them that they feel
+comfortable working on. For this purpose, I keep my
+<a href="https://trello.com/b/EzbIyrUS/new-atlantis">task board on Trello</a> updated.</p>
+
+<p>Even as a single-team developer, this helps me focus on my work. There is
+satisfaction in seeing how many tasks I have moved, and I never wonder what
+needs to be done next, so I don&rsquo;t work on stuff that isn&rsquo;t important.</p>
+
+<h2>What got done</h2>
+
+<p>I have planned an aggressive
+<a href="https://github.com/badgerman/atlantis/wiki/Helios-Game-Design-Document">list of features</a>
+for Helios, and I wrote Design rationale and a task breakdown for all of them.
+This gives me material for all my future sprints until the start of the game.</p>
+
+<p>The core feature I worked on for first was the most difficult one. I believe in
+addressing risk head-on, so I worked on multi-hex movement for ships. Talking to
+the atlantisdev folks helped me narrow the scope to only ships, which don&rsquo;t have
+to worry about guards, terrain modifiers, and other complications to the source.
+I also decided to delay the new action system I have planned, and in the end it
+turned out to actually be pretty straightforward.</p>
+
+<p>I got a lot of other small and large things shipped. My other focus was making
+more things configurable on a per-game basis, by moving them into the json
+configuration file:</p>
+
+<ul>
+<li>players start with 10 men and $2000, which are configurable values.</li>
+<li>the width/height of the map is configurable, but stays fixed after world
+generation, and does not need to be recalculated every time the data file is
+loaded.</li>
+<li>Regions have a unique id, and the neighbor-graph of all regions is stored in
+the data file, which makes coordinates a merely cosmetic attribute of a
+region. They are no longer needed to rebuild the region::connect array.</li>
+<li>All regions are stored in a hash table, so they are fast to look up if you
+know their unique ID.</li>
+<li>Ship classes are configurable, with speed, cost, and capacity. The game is no
+longer limited to only three types of ship, although the Helios game will
+probably still have a longboat, clipper, and galleon.</li>
+<li>I killed the original world generator, leaving only the code that was used in
+Atlas. This will eventually be modified, too. It looks like the next sprint is
+going to have world generation as one of its themes.</li>
+<li>Terrain types are configurable. For Helios, all production in a region has
+been reduced by 80%.</li>
+<li>The code compiles on stock Ubuntu 13.04 again.</li>
+<li>I compiled and familiarized myself with the ALH code.</li>
+</ul>
+
+
+<h2>What did and didn&rsquo;t work</h2>
+
+<p>The atlantisdev group is a great sounding board for ideas. I am not a game
+designer who creates things in a vacuum, and talking about my plans with other
+people helps me a lot.</p>
+
+<p>I am still looking for other developers to help me. Two people have stepped up,
+and I have added them as collaborators to the Trello board, but none of them has
+started on any task work.</p>
+
+<p>Communication with other developers is mixed. I started an #atlantis IRC channel
+on irc.lunarnet.org, but only one person has been showing up regularly.
+Hopefully, this is going to get better. Please, if you are interested in
+Atlantis developments, even just as a lurker, I want to talk to you.</p>
+
+<p>Investigating ALH helped me get some ideas about world coordinates sorted out,
+realizing that the code didn&rsquo;t need them, and as long as the client can draw a
+map, neither do the players. I am probably going to let players choose how they
+want them laid out on a per-faction basis, with a default preference for the
+ALH layout.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Atlas: Postmortem Notes]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/09/20/atlas-postmortem/"/>
+    <updated>2013-09-20T00:32:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/09/20/atlas-postmortem</id>
+    <content type="html"><![CDATA[<p>Atlas, my game of Atlantis 1.0 (with small modifications) is finally ending in
+turn 22, by vote of the remaining players. There are 6 factions left, and it&rsquo;s
+time to look at what worked and what didn&rsquo;t. I kind of knew a lot of this
+beforehand (A1 is pretty well-known), but I have not seen a critical
+retrospective of past games, and think it might be constructive to do a
+write-up. I know a lot of this is fixed in A5 or Eressea, but remember I wanted
+to go back to basics and see what the world was like 20 years ago when Russell
+Wallace first created it.</p>
+
+<!-- more -->
+
+
+<h2>What worked</h2>
+
+<ol>
+<li>The game runs smoothly on all three types of machines I used: Windows (x64),
+Ubuntu (x86) and Raspbian (ARM).</li>
+<li>I have a very good setup for processing turns.</li>
+<li>I can run multiple games side-by-side on the same machine (untested).</li>
+<li>Kept a regular schedule, the automatic turns worked (almost) every weekend.</li>
+<li>Few serious bugs: I had to re-run only 2 turns.</li>
+<li>Hex maps: major new feature that didn&rsquo;t break.</li>
+<li>JSON for reports: One player wrote a JavaScript mapping tool, and I wrote an order-template generator.</li>
+<li>I killed the TEACH command, which reduced a ton of micro-optimization.</li>
+<li>open-source game meant I was getting bug reports from people who read the code!</li>
+</ol>
+
+
+<h2>What didn&rsquo;t work</h2>
+
+<ol>
+<li>The map generator created too many unconnected continents.</li>
+<li>Some players were on an island all by themselves.</li>
+<li>Community: There wasn&rsquo;t much of a sense of community. I think that a forum
+does not replace a weekly in-world newspaper.</li>
+<li>The world in general was too big: I spawned three hexes per player, but in
+the endgame, my faction is spread over two dozen hexes. Player drop-off really,
+really hurts.</li>
+<li>All regions are exchangeable, and mostly the same. I recruit peons in every
+region, I tax as much as I can, and I build longbows/ships in forests vs.
+swords/armor in mountains. There is no strategic component to terrain at all.
+Why are swamps even in the game?</li>
+<li>Movement is incredibly slow. Getting raw materials out of a mountain or
+troops to the other end of the world is arduous.</li>
+<li>Micromanagement: I spent way too much time writing orders to pass money and
+materials around between units in the same region.</li>
+<li>Way too many units! The way skills work make it beneficial not to merge
+similar units, and the two major factions today both have in excess of 100
+units.</li>
+<li>Ships take too long to build. There are two longboats and one clipper, and as
+many again that are still under construction.</li>
+<li>Buildings: ditto. A single faction built all three buildings that exist in
+the world.</li>
+<li>There is a huge surplus of weapons and money. Taxation and Work are the main
+sources of income.</li>
+<li>There hasn&rsquo;t been a large-scale war, and even though factions have
+researched all spells on levels 1+2, they haven&rsquo;t gotten to use them.</li>
+<li>Community tool building: There is only one mapping tool that I know of, and
+the player kept it to himself.</li>
+<li>Hex directions: I gave the two additional directions unconventional names
+(Mir and Ydd for NorthWest and SouthEast, respectively), so as not to have four
+directions start with the same 2 letters (abbreviations are frequently used by
+players when moving). This turned out to confuse people.</li>
+<li>Wrap-around world. While it meant that nobody was at the edge of the map,
+this hardly mattered (no ships), and players were confused about the relative
+location of region (17,17) to (0,0). Not having tools made this worse.</li>
+<li>The best strategy I observed was to send scout units out to look for players
+that never made a turn. Each crunchy starting unit contains a yummy core of
+$5000, which makes it worth to invest your entire starting capital to this rush
+strategy.</li>
+</ol>
+
+
+<p>Did you play? The above are obviously just my impressions, but if you played and
+disagree, or have something to add to my list, please add to it. I like
+flattery, but also enjoy serious criticism. I&rsquo;m doing this to learn, after all.</p>
+
+<h2>What&rsquo;s next?</h2>
+
+<p>The game is playable, and anyone who would like to experience it should be able
+to just pull it from github and play it. I think that in itself is a huge
+success. At the same time, I didn&rsquo;t add a lot of bloat to it: You don&rsquo;t need an
+XML library or OpenGL to run it, in fact my Raspberry Pi compiles it straight
+from a fresh checkout :&ndash;) I wouldn&rsquo;t mind doing more development, but it would
+take a bigger group of hackers. I have a huge list of ideas for features, in
+fact, just not enough time to write them all. Let me list off what I came up
+with during my hiking vacation (got to make the brain do something when you&rsquo;re
+walking in the rain for 5 hours):</p>
+
+<ol>
+<li>Movement is kind of my #1 pet peeve. The current system makes ships
+pointless, and there is no way to make a haste spell, or give riders a movement
+advantage, or differentiate terrains. A system for multi-step moves needs to be
+added.</li>
+<li>Micromanagement sucks the joy out of the game. I&rsquo;m currently favoring
+centralized upkeep from a faction-wide treasury, and city-based taxation instead
+of local TAX orders.</li>
+<li>Visual aids. I was toying with the idea of a GL renderer for maps, but did
+not get very far.</li>
+<li>Smaller ships. They take too long to build, and exploration only kicks off
+when everything has already been discovered by land. Two types of ship are
+probably enough.</li>
+<li>Actual empire-building. The current buildings are bunk, but I have a design
+for cities in my head, as economic centers of a player&rsquo;s empire, where taxation
+and recruitment are located.</li>
+<li>Fewer, better, units. I want to do Olympia-style stacks of nobles and common
+units, and I have most of that code already written.</li>
+<li>Starting a player off with more units and less money to take out the rush
+strategy.</li>
+<li>Make initial hiring of units for a rush harder by limiting recruiting to once
+every season (every N turns), from cities only. I&rsquo;m sure that has other fun
+side-effects, too.</li>
+<li>Brainstorm on strategic value of terrain types. Movement penalties,
+obviously. Limit ships to landing in plains only.</li>
+<li>New combat rules, with more strategic bonuses from nobles and unit stacking.</li>
+<li>Eliminate skills in favor of unit archetypes. Archers, Knights, Pikemen,
+etc. have innate combat bonuses, and you recruit them for a combined price of
+money + items.</li>
+<li>No more money on units. All money is locked in the treasury of a city, and
+cities pay upkeep or recruit units.</li>
+<li>No more individual weapons and armor carried around by the units. If you
+recruit an Archer, it is assumed that she has a longbow, and certain fixed
+combat stats, plus situational modifiers. Some exceptions: mounts (horses,
+griffons) for movement bonuses, and money, to transfer it between cities. It may
+be that only nobles can carry money.</li>
+</ol>
+
+
+<h3>Want to help?</h3>
+
+<p>So what I&rsquo;m proposing is a pretty radical change of the game design, and the
+outcome is probably more Olympia than Atlantis 5 or Eressea, with a few actually
+different elements. My time is sadly limited, to the point where for the past
+weeks I have delegated the majority of my faction&rsquo;s order writing to somebody
+else (yes, the micro-management is that bad).</p>
+
+<p>My past experience with trying to build a new games has been mixed. In Eressea,
+we were three programmers with quite different ideas about the game we wanted to
+build, and the end result was pretty successful. Building a new game from the
+Eressea code has failed at least twice now, either because I was the only
+programmer, or because the baggage of the old game was so big. That experience
+was my main motivation to look at A1 again. Which means the ideal people I would
+like to work with check these requirements:</p>
+
+<ul>
+<li>Programmers. Adding non-programmers to a project increases the chatter, and
+does not increase actual productivity. Knowing what&rsquo;s possible in the code base
+should inform what features are designed :&ndash;)</li>
+<li>Seasoned C programmers. Portable C99 is my favorite language, and the game is
+always going to be C at its core. I don&rsquo;t like C++ all that much, please do not
+suggest it.</li>
+<li>Atlantis Players. I would still want to run new games upon reaching feature
+milestones, and developers should play in those games to see what works and what
+doesn&rsquo;t.</li>
+<li>Basic computer skills. Must be able to set up their own development machine,
+know how to use IRC, ssh, git and a compiler.</li>
+<li>Must be able to spell and form complete sentences. It&rsquo;s sad that this needs
+to be said, but this is the world we live in.</li>
+</ul>
+
+
+<p>If you feel that you match this profile, and you have time and energy to work
+on, drop me a note, and I&rsquo;ll see if there is enough of a response to kick this
+off. It may not be today or this month, consider this offer good for a while.</p>
+
+<p>Apart from people to work on a new game, I&rsquo;d also like to work on better
+tooling. The ideas I have been tossing around are a GUI client, compatible JSON
+reports for A5 and Eressea (for cross-game tool sharing), a unit scripting tool
+(Lua), and a mobile app (at least a map). There&rsquo;s something to be said for
+sharing this kind of work among as many games as possible, and I&rsquo;m favoring
+things that are interoperable.</p>
+]]></content>
+  </entry>
+  
+</feed>

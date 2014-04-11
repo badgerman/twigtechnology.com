@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Prefix Search, Part 2: Crit-bit Trees - Twig Technology</title>
+  <meta name="author" content="Enno Rehling">
+
+  
+  <meta name="description" content="The problem with the prefix search problem I described in my previous post is
+that there is most likely no good data structure in your language to do &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.twigtechnology.com/blog/2012/05/26/prefix-search">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Twig Technology" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Twig Technology</a></h1>
+  
+    <h2>[...] incredibly interested in all the things you could do with twigs.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.twigtechnology.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Prefix Search, Part 2: Crit-bit Trees</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-26T10:35:33+02:00" pubdate data-updated="true">May 26<span>th</span>, 2012</time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://www.twigtechnology.com">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>The problem with the prefix search problem I described in my previous post is
+that there is most likely no good data structure in your language to do this
+with. There certainly isn&rsquo;t one in C. But the good news is that we get to build
+our own! How often do we still get to write data structures from scratch in this
+day and age? And when is it ever a good idea?</p>
+
+<!-- more -->
+
+
+<p>Of course, you should always try to go with the simplest thing that works: In my
+case, that&rsquo;s building an array of your million strings, and to search for a
+prefix, just strncmp each entry. We&rsquo;ll benchmark that, see how well it performs,
+and use it as our baseline for a good implementation.</p>
+
+<p>Have a look at the <a href="https://github.com/badgerman/critbit/blob/master/naive.c">naive
+implementation</a> that I
+wrote. Finding a needle in a haystack of a million strings takes almost no time
+at all, but building the array takes a while, so I&rsquo;ll just do 1000 searches,
+each for a single needle, in a set of a million strings, followed by 1000
+searches for a prefix that occurs exactly 11 times:</p>
+
+<pre><code>$ bin/naive -x 100 1m 111111
+init: 0.30s
+find: 0.82s
+$ bin/naive -x 1000 1m 111111
+init: 0.26s
+find: 7.51s
+</code></pre>
+
+<p>8 ms per lookup may not sound like much, but it&rsquo;s actually not a very good time
+at all. Excellent! We like this in a naive solution that we want to beat :&ndash;)</p>
+
+<h2>Introducing crit-bit trees</h2>
+
+<p>The data structure we want for this sort of thing is conventionally known as a
+radix-tree or trie. I think that&rsquo;s either pronounced like <strong>try</strong> or
+like <strong>tree</strong>, but either way it&rsquo;s really confusing. Also, it really helps
+to think of the data we are operating on as a string of bits, not characters.
+The specific type of trie that I decided to implement is from
+<a href="http://cr.yp.to/critbit.html">this paper</a> by the talented Mr.
+<a href="https://en.wikipedia.org/wiki/Daniel_J._Bernstein" title="Daniel J. Bernstein">djb</a>.</p>
+
+<p>The general idea of this approach is that we have a binary tree, and if some of
+our bit-strings have a common prefix x such that one string has a prefix of x0
+and the other x1, then the tree shall contain a node where all the strings
+beginning with x0 are found to the left of the node, and all strings starting
+with x1 are found to the right.</p>
+
+<p>What&rsquo;s neat is taht we don&rsquo;t need a node for every possible bit position either,
+but only for those where actual strings in or dataset diverge. To give an
+example, if we had only two strings 0001001 and 0100100, (these start to differ
+at the second bit), then we create an internal node in my tree that contains the
+bit-position, and two child pointers which point at external, or leaf, nodes
+that contain our two strings. To find a string in this, we follow a trail of
+internal nodes from the root, check the bit position in our needle string, and
+recurse down to the respective child node. Once we reach a leaf, we compare our
+needle to the string stored here, because it&rsquo;s possible that our needle and the
+stored string differ at other bits that we did not check on our way down.</p>
+
+<p>Apart from being a data structure for key lookups, an interesting property of
+tries is that all entries beginning with a particular substring are children of
+the same node. That makes this data structure the perfect candidate for our
+problem of prefix search. So, how fast is it? Actually, it&rsquo;s way too fast to
+measure with just 100 searches, but we can do simple divisions, so let&rsquo;s do a
+million lookups and prefix searches instead:</p>
+
+<pre><code>$ bin/benchmark -x 1m 1m 111111
+init: 0.62s
+find: 0.25s
+$ bin/benchmark -x 1m 1m 11111
+init: 0.66s
+find: 1.09s
+</code></pre>
+
+<p>250 nanoseconds per lookup, and a microsecond per prefix-search. That&rsquo;s a pretty
+neat improvement of four orders of magnitude! In my next post, I am going to
+talk a little bit about the actual implementation and interface. I have published
+my source code on <a href="https://github.com/badgerman/critbit">github</a>.</p>
+
+<h2>Some Thoughts</h2>
+
+<ul>
+<li>My dataset is pretty small. A million keys like this can probably fit into a
+modern CPU&rsquo;s L2 cache if they are small enough. But trust me, the numbers are
+only getting better when the dataset grows!</li>
+<li>Each internal node is really small: I need two pointers, a word to store the
+bit position (my implementation is excessive and uses size_t, plus a byte to
+store a bit mask. You could go a little smaller at the cost of performance
+and/or size limitations, but it&rsquo;s on the order of one or two dozen bytes. All
+internal nodes are the same size, so you would want to pair this with a clever
+memory allocator.</li>
+<li>Initialization is somewhat slower, because creating the tree is more
+complicated than just doing a couple of allocations. However, you could
+conceivably store the final tree in a compact format on disk once it&rsquo;s
+generated, and load it as a big chunk of memory, where you replace a pointer
+to an internal node with an integer index into your array of internal nodes.</li>
+<li>The crit-bit tree also allows fast deletion, which I haven&rsquo;t benchmarked,
+mostly because I have nothing to compare it to.</li>
+<li>All times are taken with clock() on a JoyentCloud VM. I have no idea what kind
+of CPU that translates to.</li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Enno Rehling</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-26T10:35:33+02:00" pubdate data-updated="true">May 26<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/algorithms/'>algorithms</a>, <a class='category' href='/blog/categories/code/'>code</a>, <a class='category' href='/blog/categories/kata/'>kata</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.twigtechnology.com/blog/2012/05/26/prefix-search/" data-via="ennor" data-counturl="http://www.twigtechnology.com/blog/2012/05/26/prefix-search/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/05/24/prefix-search/" title="Previous Post: Prefix Search, Part 1: A Challenge!">&laquo; Prefix Search, Part 1: A Challenge!</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/05/28/prefix-search/" title="Next Post: Prefix search, Part 3: more fun with tries">Prefix search, Part 3: more fun with tries &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/04/10/my-jedrc/">My .jedrc Configuration</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/11/using-thunderbird-with-gmail/">Configuring Thunderbird and Other MUAs for Gmail</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/10/understanding-gmail-imap/">Understanding Gmail's IMAP Server</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/10/blogging-with-a-raspberry-pi/">Blogging With a Raspberry Pi</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2014/02/07/personal-backup-strategies/">Personal Backup Strategies</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/badgerman">@badgerman</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'badgerman',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Enno Rehling -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ennorehling';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.twigtechnology.com/blog/2012/05/26/prefix-search/';
+        var disqus_url = 'http://www.twigtechnology.com/blog/2012/05/26/prefix-search/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

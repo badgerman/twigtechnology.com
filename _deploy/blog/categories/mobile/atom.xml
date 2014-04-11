@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Mobile | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/mobile/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Android NDK Shared Libraries]]></title>
+    <link href="http://www.twigtechnology.com/blog/2012/02/26/android-ndk-shared-libraries/"/>
+    <updated>2012-02-26T23:11:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2012/02/26/android-ndk-shared-libraries</id>
+    <content type="html"><![CDATA[<p>This morning, I got stumped by the Java/NDK integration. I was trying to add
+another shared library (Lua) to a project, and kept getting these dynamic linker
+error messages:</p>
+
+<pre><code>I/ActivityManager( 1386): Start proc org.libsdl.app for activity org.libsdl.app/.SDLActivity: pid=25826 uid=10087 gids={1015}
+W/dalvikvm(25826): Exception Ljava/lang/UnsatisfiedLinkError; thrown during Lorg/libsdl/app/SDLActivity;.&amp;lt;clinit&amp;gt;
+W/dalvikvm(25826): Class init failed in newInstance call (Lorg/libsdl/app/SDLActivity;)
+W/dalvikvm(25826): threadid=1: thread exiting with uncaught exception (group=0x40020ac0)
+E/AndroidRuntime(25826): FATAL EXCEPTION: main
+E/AndroidRuntime(25826): java.lang.ExceptionInInitializerError
+E/AndroidRuntime(25826):        at java.lang.Class.newInstanceImpl(Native Method)
+E/AndroidRuntime(25826):        at java.lang.Class.newInstance(Class.java:1429)
+E/AndroidRuntime(25826):        at android.app.Instrumentation.newActivity(Instrumentation.java:1021)
+E/AndroidRuntime(25826):        at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2577)
+E/AndroidRuntime(25826):        at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2679)
+E/AndroidRuntime(25826):        at android.app.ActivityThread.access$2300(ActivityThread.java:125)
+E/AndroidRuntime(25826):        at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2033)
+E/AndroidRuntime(25826):        at android.os.Handler.dispatchMessage(Handler.java:99)
+E/AndroidRuntime(25826):        at android.os.Looper.loop(Looper.java:123)
+E/AndroidRuntime(25826):        at android.app.ActivityThread.main(ActivityThread.java:4627)
+E/AndroidRuntime(25826):        at java.lang.reflect.Method.invokeNative(Native Method)
+E/AndroidRuntime(25826):        at java.lang.reflect.Method.invoke(Method.java:521)
+E/AndroidRuntime(25826):        at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:868)
+E/AndroidRuntime(25826):        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:626)
+E/AndroidRuntime(25826):        at dalvik.system.NativeStart.main(Native Method)
+E/AndroidRuntime(25826): Caused by: java.lang.UnsatisfiedLinkError: Library main not found
+E/AndroidRuntime(25826):        at java.lang.Runtime.loadLibrary(Runtime.java:461)
+E/AndroidRuntime(25826):        at java.lang.System.loadLibrary(System.java:557)
+E/AndroidRuntime(25826):        at org.libsdl.app.SDLActivity.&amp;lt;clinit&amp;gt;(SDLActivity.java:53)
+E/AndroidRuntime(25826):        ... 15 more
+W/ActivityManager( 1386):   Force finishing activity org.libsdl.app/.SDLActivity
+</code></pre>
+
+<p>What it was was that my Activity (which is a small java stub) needed to call
+System.loadLibrary(&ldquo;Lua&rdquo;); to load that new library. How is that related to the
+error message? I have no idea.</p>
+
+<p>Sigh. Sometimes missing a single line will cost you half a day.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[SDL on Android]]></title>
+    <link href="http://www.twigtechnology.com/blog/2012/02/20/sdl-on-android/"/>
+    <updated>2012-02-20T22:00:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2012/02/20/sdl-on-android</id>
+    <content type="html"><![CDATA[<p>Here&rsquo;s a quick summary of how I got SDL to work on Android. First off, this is
+my setup:</p>
+
+<ul>
+<li>Android NDK r6</li>
+<li>Android SDK r12</li>
+<li>SDL-2.0.0-6284</li>
+</ul>
+
+
+<p>The first piece of bad news is that Android support is only in the upcoming SDL
+2.0, not in the current stable 1.2. Although I&rsquo;m sure it could be backported,
+SDL2 is pretty similar, so I decided to upgrade. The README.android file does a
+pretty good job of explaining the steps, but there were a few kinks:</p>
+
+<!-- more -->
+
+
+<ol>
+<li>in jni/src/Android.mk, the line LOCAL_SHARED_LIBRARIES := SDL is wrong. That
+needs to be SDL2</li>
+<li>Java didn&rsquo;t like that all the classes in src/org/libsdl/app/SDLActivity.java
+are in one file. I had to make separate SDLMain.java and SDLSurface.java files.</li>
+<li>In the onTouch method, I get a compile error (cannot find symbol)
+for event.getActionIndex() and event.getActionMasked(), so I commented out some
+of that code and haven&rsquo;t used touch events yet. I still need to crack this nut.</li>
+<li>Because my SDK is installed in C:\Google\android-sdk-windows, I had to edit
+local.properties to say <code>sdk.dir=/Google/android-sdk-windows</code></li>
+</ol>
+
+
+<p>Now I have one of the SDL test app running on my phone, drawing rectangles. Time
+to see if I can do something useful with that!</p>
+
+<p><img class="<a" src="href="http://25.media.tumblr.com/tumblr_lzpph2hil01qhsievo1_1280.jpg">http://25.media.tumblr.com/tumblr_lzpph2hil01qhsievo1_1280.jpg</a>" title="&ldquo;Not bad for a single morning. This is what holidays are for!&rdquo; &ldquo;Screenshot&rdquo;" ></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Motorola XOOM: First Impressions]]></title>
+    <link href="http://www.twigtechnology.com/blog/2011/04/21/motorola-xoom-first-impressions/"/>
+    <updated>2011-04-21T06:00:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2011/04/21/motorola-xoom-first-impressions</id>
+    <content type="html"><![CDATA[<p>Google gave me one of these 10" tablets at GDC. People ask me how I like it
+whenever they see it, and I finally have an opinion. It&rsquo;s a nice device,
+overall, but I would not have paid the money for it. There&rsquo;s a place for it in
+my life, albeit a small one.</p>
+
+<!-- more -->
+
+
+<p>The first thing people say when they pick it up is &ldquo;this is heavy&rdquo;, and it is
+true that it&rsquo;s heavier than the iPad, but I kinda like it. It feels substantial.
+I have the 4G version without 4G, so I&rsquo;m only using it on Wireless LAN, which
+hasn&rsquo;t been a problem, since I don&rsquo;t carry it with me at all times. It&rsquo;s not
+that kind of device.</p>
+
+<p>Best usage scenarios so far:</p>
+
+<ul>
+<li>As a surface for looking at geocaching maps with others and planning a trip.</li>
+<li>As a TV companion to read up on Doctor Who lore.</li>
+<li>As bedside internet, keeping me from getting up in the morning.</li>
+<li>As a mobile phone, thanks to the Skype app.</li>
+</ul>
+
+
+<h2>Pros:</h2>
+
+<ul>
+<li>Android 3.0 is pretty cool. I like the UI of the OS quite a lot.</li>
+<li>The multi-tasking is really working.</li>
+<li>You get used to the idea that apps don&rsquo;t need to be closed after a while.</li>
+<li>It&rsquo;s made my Google Reader unread items count go down a lot.</li>
+<li>I like to keep it next to the bed, because it starts so much faster than a PC coming out of hibernation.</li>
+<li>Google Chat and Google Mail apps are fantastic.</li>
+<li>The HDMI output is great for presentations.</li>
+<li>Battery life is about 2 days with my usage pattern.</li>
+<li>Camera quality is light-years ahead of the iPod camera.</li>
+</ul>
+
+
+<h2>Cons:</h2>
+
+<ul>
+<li>There is no good IRC app.</li>
+<li>It does not charge over USB. I now have yet another charger.</li>
+<li>Some apps don&rsquo;t know how to cope with the screen size (Caltrain!)</li>
+<li>The web browser frequently stops loading things, reboot is the only fix I&rsquo;ve found.</li>
+<li>No netflix app.</li>
+<li>The Skype app doesn&rsquo;t have video.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

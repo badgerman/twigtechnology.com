@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Privacy | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/privacy/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[E-Mail Encryption]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/12/24/email-encryption/"/>
+    <updated>2013-12-24T11:00:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/12/24/email-encryption</id>
+    <content type="html"><![CDATA[<p>Here is a depressing thought: public-key encryption was around when I was in
+college in the mid-90&rsquo;s, and it&rsquo;s still not widely adopted. Instead, it&rsquo;s
+considered &ldquo;too complicated for regular users&rdquo;, and none of the major vendors
+of email solutions has made an attempt to integrate encryption into their
+software.</p>
+
+<p>As long as the NSA and Google read every one of my emails, I want to have a way
+of preserving my privacy. I&rsquo;m writing these instructions in the hope that some
+of the people I communicate will find it easier to use encryption when
+communicating with me.</p>
+
+<!-- more -->
+
+
+<h2>Using GnuPG with Thunderbird</h2>
+
+<p>PGP, or &ldquo;Pretty Good Privacy&rdquo;, is a standard for email encryption developed in
+1991, and remains the de-facto standard until today. The most popular
+implementation of the PGP standard is the Gnu Privacy Guard (commonly
+abbreviated as GnuPG or GPG). On your computer, you will need to install a <a href="http://www.gnupg.org/">GnuPG download</a> that matches your operating system.</p>
+
+<p>To integrate GnuPG into Thunderbird, you will need to install the <a href="https://www.enigmail.net/">Enigmail extension</a>.</p>
+
+<h2>Using APG on Android</h2>
+
+<p>On Android, PGP is implemented in the <a href="https://play.google.com/store/apps/details?id=org.thialfihar.android.apg">APG App</a> that I mentioned in my previous posting.</p>
+
+<h2>Inline PGP vs. PGP/MIME</h2>
+]]></content>
+  </entry>
+  
+</feed>

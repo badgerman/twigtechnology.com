@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Git | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/git/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Git Svn Rebase Fails, Is Not Using Plink]]></title>
+    <link href="http://www.twigtechnology.com/blog/2011/10/03/git-svn-rebase-fails/"/>
+    <updated>2011-10-03T04:03:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2011/10/03/git-svn-rebase-fails</id>
+    <content type="html"><![CDATA[<p>I installed a new version of msysgit some days ago, and git svn rebase stopped
+working. Some digging showed that it was not using plink to talk to putty anymore,
+but using openssh. This despite my having told the git installer that I would
+like to use plink.exe (and pageant).</p>
+
+<!-- more -->
+
+
+<p>What was going on? git was not to blame here &ndash; it was svn that was using plink. I
+had also reinstalled msys, and with it a new subversion config file, it seems.
+The fix was to edit my C:\Users\erehling.subversion\config file like this:</p>
+
+<pre><code>[tunnels]
+ssh="C:/Program Files (x86)/PuTTY/plink.exe"
+</code></pre>
+
+<p>Next time this happens, I hope I&rsquo;ll remember that I wrote this little reminder
+for myself :&ndash;)</p>
+]]></content>
+  </entry>
+  
+</feed>

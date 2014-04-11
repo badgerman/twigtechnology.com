@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Sdl | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/sdl/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[SDL on Android]]></title>
+    <link href="http://www.twigtechnology.com/blog/2012/02/20/sdl-on-android/"/>
+    <updated>2012-02-20T22:00:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2012/02/20/sdl-on-android</id>
+    <content type="html"><![CDATA[<p>Here&rsquo;s a quick summary of how I got SDL to work on Android. First off, this is
+my setup:</p>
+
+<ul>
+<li>Android NDK r6</li>
+<li>Android SDK r12</li>
+<li>SDL-2.0.0-6284</li>
+</ul>
+
+
+<p>The first piece of bad news is that Android support is only in the upcoming SDL
+2.0, not in the current stable 1.2. Although I&rsquo;m sure it could be backported,
+SDL2 is pretty similar, so I decided to upgrade. The README.android file does a
+pretty good job of explaining the steps, but there were a few kinks:</p>
+
+<!-- more -->
+
+
+<ol>
+<li>in jni/src/Android.mk, the line LOCAL_SHARED_LIBRARIES := SDL is wrong. That
+needs to be SDL2</li>
+<li>Java didn&rsquo;t like that all the classes in src/org/libsdl/app/SDLActivity.java
+are in one file. I had to make separate SDLMain.java and SDLSurface.java files.</li>
+<li>In the onTouch method, I get a compile error (cannot find symbol)
+for event.getActionIndex() and event.getActionMasked(), so I commented out some
+of that code and haven&rsquo;t used touch events yet. I still need to crack this nut.</li>
+<li>Because my SDK is installed in C:\Google\android-sdk-windows, I had to edit
+local.properties to say <code>sdk.dir=/Google/android-sdk-windows</code></li>
+</ol>
+
+
+<p>Now I have one of the SDL test app running on my phone, drawing rectangles. Time
+to see if I can do something useful with that!</p>
+
+<p><img class="<a" src="href="http://25.media.tumblr.com/tumblr_lzpph2hil01qhsievo1_1280.jpg">http://25.media.tumblr.com/tumblr_lzpph2hil01qhsievo1_1280.jpg</a>" title="&ldquo;Not bad for a single morning. This is what holidays are for!&rdquo; &ldquo;Screenshot&rdquo;" ></p>
+]]></content>
+  </entry>
+  
+</feed>

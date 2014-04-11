@@ -1,0 +1,1583 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[My .jedrc Configuration]]></title>
+    <link href="http://www.twigtechnology.com/blog/2014/04/10/my-jedrc/"/>
+    <updated>2014-04-10T23:31:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2014/04/10/my-jedrc</id>
+    <content type="html"><![CDATA[<p>In the war between emacs and vim, I lean towards emacs, but what I
+actually use is <a href="http://www.jedsoft.org/jed/">jed</a>. It&rsquo;s a fairly
+minimal editor, great for use in a remote terminal, with syntax
+highlighting, smart indenting, and just enough features to be decent
+for programming in. After years of fighting with the defaults, I have
+finally figured out the configuration I like. Like all my other
+configuration files, my .jedrc is stored
+<a href="https://github.com/badgerman/dotfiles/blob/master/.jedrc">on github</a>.</p>
+
+<!-- more -->
+
+
+<h2>Some sensible defaults for programming</h2>
+
+<p>I prefer indentation with 4 spaces, not tabs, and do not want my
+braces to be on separate lines (1TBS):</p>
+
+<pre><code>USE_TABS = 0;
+TAB_DEFAULT = 4;
+C_INDENT = 4;
+C_BRA_NEWLINE = 1;
+C_BRACE = 0;
+C_Colon_Offset = 0;
+</code></pre>
+
+<p>In text mode (especially when writing Makefiles), I prefer that the
+Tab key inserts a tab character instead of indenting the current line
+(the default). I also like those tab stops to be spaced 8 columns wide:</p>
+
+<pre><code>define text_mode_hook()
+{
+    local_setkey("self_insert_cmd", "\t");
+    TAB = 8;
+}
+</code></pre>
+
+<h2>Custom Hotkeys</h2>
+
+<p>I prefer Home and End to Ctrl+A and Ctrl+E:</p>
+
+<pre><code>setkey("bol", "\e[1~");
+setkey("eol", "\e[4~");
+</code></pre>
+
+<p>I like to navigate with Ctrl+Cursor. Up and Down skip an entire paragraph:</p>
+
+<pre><code>setkey("backward_paragraph", "\e[A");
+setkey("forward_paragraph",  "\e[B");
+</code></pre>
+
+<p>Getting Ctrl+Left and Ctrl+Right to skip forward and back a word
+needed a little more work, because <code>skip_word</code> and <code>bskip_word</code> behave
+poorly at the beginning and end of lines. I stole a lot of this from
+ide.sl:</p>
+
+<pre><code>setkey("ide_skip_word",      "\e[C");
+setkey("ide_bskip_word",     "\e[D");
+custom_variable ("Ide_Skippable_Chars",
+    "\n\t !\"#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^{|}~");
+define ide_bskip_word()
+{
+    bskip_chars (Ide_Skippable_Chars);
+    bskip_chars ("^" + Ide_Skippable_Chars);
+}
+
+define ide_skip_word()
+{
+    variable p = _get_point();
+    skip_chars("^" + Ide_Skippable_Chars);
+    if (_get_point() == p) {
+        skip_chars(Ide_Skippable_Chars);
+        skip_chars("^" + Ide_Skippable_Chars);
+    }
+}
+</code></pre>
+
+<p>Those two custom functions do the right thing. To be perfectly honest,
+I would prefer Alt+Cursor, but I cannot figure out what the code for
+those is. I got these codes from typing ^hk followed by the desired
+key, but that doesn&rsquo;t seem to work for the combinations I really want.
+I guess I&rsquo;ll get used to this eventually.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Configuring Thunderbird and Other MUAs for Gmail]]></title>
+    <link href="http://www.twigtechnology.com/blog/2014/02/11/using-thunderbird-with-gmail/"/>
+    <updated>2014-02-11T00:09:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2014/02/11/using-thunderbird-with-gmail</id>
+    <content type="html"><![CDATA[<p>Following up on my previous post, I&rsquo;m going to put what I learned to use and configure my mail software to use Gmail in a way that deals with the inherent folder/label confusion.</p>
+
+<!-- more -->
+
+
+<h2>Thunderbird</h2>
+
+<p>When you create a new account with a gmail.com address, Thunderbird will automatically guess the correct IMAP/SMTP servers and settings for you, but you still want to tweak that initial setup.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Understanding Gmail's IMAP Server]]></title>
+    <link href="http://www.twigtechnology.com/blog/2014/02/10/understanding-gmail-imap/"/>
+    <updated>2014-02-10T09:00:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2014/02/10/understanding-gmail-imap</id>
+    <content type="html"><![CDATA[<p>I recently abandoned the Gmail web interface in favor of good old mail user agents (MUA) like Thunderbird, K-9 Mail and mutt. This has been a wonderful experience all around, but there were a few settings I had to make that were not intuitive until I understood how Gmail operates. Namely, how it treats IMAP folders.</p>
+
+<!-- more -->
+
+
+<h2>Folders vs. Labels</h2>
+
+<p>At some point during its lifetime, Gmail introduced the concept of labels for conversations. Labeling a conversation would make it show up in a separate inbox on the left-hand side of the web UI, and it&rsquo;s easy to believe that these labels map to the IMAP concept of folders. This is compounded by the fact that Gmail&rsquo;s IMAP Server presents labels in this way, and lets you subscribe/unsubscribe from them through the IMAP folder mechanism.</p>
+
+<p>However, labels are not folders. In IMAP, a message lived in only one folder at a time, and it is either in the Inbox, the Sent Mail folder or your recipe collection, but never in all of them. Gmail groups messages in conversations, and a message is found in all folders that correspond to the labels on any of its messages. Meaning if you sent an email to Mom about her cobbler recipe, and labeled her response with your Recipes label, or maybe even starred it, too, then both messages are now in the following folders of the Web UI:</p>
+
+<ol>
+<li>Inbox (because you received an email from Mom)</li>
+<li>Sent Mail (because you sent at least one message in this conversation)</li>
+<li>All Mail (Any and all messages go here)</li>
+<li>Recipes (the label you chose)</li>
+<li>Starred</li>
+</ol>
+
+
+<p>This is key to understanding why Gmail seems to be acting strange when used from another MUA.</p>
+
+<ul>
+<li>Send a message, and Gmail will automatically label it to appear in the <strong>Sent Mail</strong> folder. Instructing Thunderbird to keep copies of sent mails on the server will create duplicates.</li>
+<li>To delete a conversation from a folder means to remove that label from it. The message is not physically deleted, and always remains in the <strong>All Mail</strong> folder.</li>
+<li>Gmail&rsquo;s Archive command simply removes the <strong>INBOX</strong> label from the conversation. On a normal server, it would move the archived message from the inbox to a folder named Archives, and Thunderbird et al are built around that idea of archiving. If you specify an IMAP Archive folder in Thunderbird, that will simply add another Gmail label.</li>
+<li>If you let Thunderbird copy anything to the <strong>All Mail</strong> folder, it may create another copy of the conversation?</li>
+<li>Since <strong>All Mail</strong> is not a folder, but just a label that every conversation automatically carries, it is absolutely the worst choice for an Archive location (although I&rsquo;ve seen setup guides recommend it).</li>
+</ul>
+
+
+<h2>Gmail&rsquo;s not Email</h2>
+
+<p>I&rsquo;ve used Thunderbird in my examples because it is the most widely used desktop MUA, but these findings are true for every other mail program out there that implements the IMAP protocol. The problem is not with them, it&rsquo;s with Gmail implementing the protocol to describe something very different from what it was intended for.</p>
+
+<p>This reminds me of a time long past. There was a period in the 90&rsquo;s when we had two classes of email programs. The ones that followed standards (mutt, pine, elm, Thunderbird), and the ones that tried to implement Internet Mail on top of existing corporate mail systems (Outlook, Lotus Notes). Usually, the latter had bad abstractions that made them do things like send Word documents, HTML messages or unrecognizable headers. Interestingly, Outlook Express looks like Microsoft&rsquo;s attempt to write a pure Internet Mail software that was unencumbered by corporate mail infrastructure like Exchange server or Lotus Notes.</p>
+
+<p>The problem with all of these approaches is that they pretend to be something they are not, and they tried to jump onto a growth trend by subverting the standards. Remember how we all hated Microsoft for that? It looks as if Gmail is the Outlook of the 21st century, though. Piggy-backing on a standard that they only marginally support, just poorly enough to lure users in and then make them switch to their own implementation, which has its own restful API and is not handicapped by having to speak to the server in a language it only barely speaks, i.e. IMAP.</p>
+
+<p>It&rsquo;s not the first time we see Google doing this. They have used the RSS to prop up Reader and Currents, and their XMPP implementation has gone from decent (Google Talk) to legacy support (Hangouts) just this past year. Just like they are about to finally flip the switch on that, I would not be surprised if IMAP support for Gmail is going to disappear in the near future, too.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Blogging With a Raspberry Pi]]></title>
+    <link href="http://www.twigtechnology.com/blog/2014/02/10/blogging-with-a-raspberry-pi/"/>
+    <updated>2014-02-10T00:09:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2014/02/10/blogging-with-a-raspberry-pi</id>
+    <content type="html"><![CDATA[<p>I am running my blog software on a Raspberry Pi that is not directly facing the internet. I will argue why you should consider doing that, or a variation of it.</p>
+
+<p>It strikes me that modern blog software is monkeyballs. We are running a huge amount of poorly written code on a public-facing server, to generate dynamic pages that, in 99.9% of all cases, contain static content. This gives attackers a big surface area for attacks, and makes blogging a real threat to your infrastructure.</p>
+
+<!-- more -->
+
+
+<h2>The Status Quo</h2>
+
+<p>Most bloggers today probably don&rsquo;t realize this, but Wordpress used to be a software that you installed on your own rented server, and that was standard procedure. As a result of the many security breaches in Wordpress and PHP, the developer&rsquo;s poor handling of them, and the fact that for Joe Average, keeping up with fixes and ahead of attackers is nigh-impossible, Wordpress and Blogger have a thriving business in hosted blogs. Any blog that lives on blogger.com or wordpress.com is now hosted by the authors of that software as a service, and there is a giant organization making sure it does not fall over. You are trading this convenience for control. It&rsquo;s possible, though kind of tricky to choose an arbitrary URL for your blog, and just forget about writing your own extensions. Also, all of your data is in the cloud, and you are paying money for this monstrosity.</p>
+
+<h2>Some assembly required</h2>
+
+<p>My solution is built from a few off-the-shelf parts, but there is no hosted solution that I&rsquo;m aware of, so Mom and Dad might need help with setting this up.</p>
+
+<h3>Octopress</h3>
+
+<p><a href="http://octopress.org/">Octopress</a> is a blog software that generates a set of static pages from <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a>. The code that powers it is the same that powers parts of github, and markdown is a wonderful format to write your posts in. You do not get fine-grained control over the HTML that is generated, but face it, most people don&rsquo;t have any kind of control over how their Wordpress blog is formatted, either. I mean, just look at how many of them cannot size images to fit their prefab theme.</p>
+
+<h3>Linux</h3>
+
+<p>I suppose this is optional. Octopress is written in Ruby, and setting it up is very easy on Linux. I wouldn&rsquo;t know about other operating systems, but imagine that Mac users will have a comparatively easy time.</p>
+
+<h3>Raspberry Pi</h3>
+
+<p>Not everyone has a Linux computer, and while you could use a VM, I simply have <a href="https://twitter.com/ennor/status/430966136428331008">so many computers</a> which I could potentially be blogging from, that it is easier to have one that is always on. The Raspberry Pi makes a wonderful low-power server, and I&rsquo;ve set up SSH access so I can rebuild the blog on the command line.</p>
+
+<h3>Web space</h3>
+
+<p>I am currently not running my own web server. Commercial entities are doing a much better job at this, for an unbeatable price, and way fewer headaches. I am paying <a href="http://www.netbeat.de/">Netbeat</a> a few dollars a year to give me a large number of 9&rsquo;s in uptime and a few MB of space for static HTML pages. At the entry-level pricing they do not offer MySQL and all the other features that a Wordpress installation would require, so my solution has that going for it, too.</p>
+
+<h2>How it&rsquo;s done.</h2>
+
+<p>The following steps get you to the same system that I use. You may want to adjust some of the steps to suit your own environment.</p>
+
+<ol>
+<li>Install Raspbian on the Raspberry Pi. This Debian-based ARM distro deserves a different blog post, but if you have a Raspberry Pi, that&rsquo;s probably the OS you are already running.</li>
+<li>Install Octopress. The <a href="http://octopress.org/docs/setup/">setup guide</a> is surprisingly short and easy to follow.</li>
+<li>Change the folder layout. We want to store our blog post sources in github, but we don&rsquo;t want to store octopress in there, to keep it easy to upgrade. I&rsquo;ll explain my layout below.</li>
+<li>Create a github repository from the sources.</li>
+<li>Install weex, and configure it.</li>
+<li>Create a deployment rule to use weex.</li>
+<li>Check out the github repository on my PC.</li>
+<li>Install <a href="http://www.markdownpad.com/">MarkDownPad</a> and start writing articles.</li>
+<li>Commit finished articles to github.</li>
+<li>On the Raspberry Pi: pull, generate and deploy.</li>
+</ol>
+
+
+<h3>Folder layout</h3>
+
+<p>My tree is structured like this:</p>
+
+<pre><code>~enno
+- octopress        # octopress clone
+- blog             # contains _config.yml
+  - source         # my github clone
+    - _posts       # articles go here
+</code></pre>
+
+<p>How we get here:
+1. After cloning and installing octopress, move the source folder that it generated into your github repository. Move _config.yml also, since it contains your blog title and other important metadata. Commit and push the result to github (the blog folder is the root of your repository).
+2. In the octopress directory, create soft-links to the moved files: <code>ln -s ../blog/_config.yml ../blog/source .</code>
+3. To rebuild the blog, you&rsquo;ll still change into the octopress folder, and call <code>rake generate</code>.</p>
+
+<h3>Deploying with weex</h3>
+
+<p>Octopress will try to deploy your blog with ssh, but even though it is 2014, my web host only offers ftp. I cannot in good confidence recommend their service, but I&rsquo;m stuck with them and I can work around this problem for now.</p>
+
+<p>Weex is a small command-line tool that will synchronize a local directory with a remote. It is part of Debian, so isntall it with <code>apt-get install weex</code>. This is my ~/.weexrc file:</p>
+
+<pre><code>$ cat ~/.weexrc
+[default]
+AsciiFile = {
+*.html
+*.ssi
+*.txt
+*.shtml
+*.php
+*.js
+*.py
+}
+
+IgnoreLocalFile = {
+*~
+}
+
+[blog]
+DestDir = /
+SrcDir = /home/enno/octopress/public
+Password = correcthorsebatterystaple
+HostName = ftp.twigtechnology.com
+LoginName = enno
+</code></pre>
+
+<p>When you&rsquo;ve gotten this far, you can manually run <code>weex blog</code> and the blog will be deployed. Weex is clever about not uploading files that already exist, but not as clever as rsync would be. Alas, that would again require ssh, so here we are.</p>
+
+<h3>Making rake deploy work</h3>
+
+<p>The canonical way to deploy your blog with octopress is to call rake deploy in the octopress directory. This is achieved by modifying the Rakefile directly, and I&rsquo;ve put the required patch in <a href="https://gist.github.com/badgerman/8912543">a gist</a>.</p>
+
+<p>Now I can run <code>rake deploy</code> from the octopress folder and that will mirror the generated blog to the web server.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Personal Backup Strategies]]></title>
+    <link href="http://www.twigtechnology.com/blog/2014/02/07/personal-backup-strategies/"/>
+    <updated>2014-02-07T07:24:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2014/02/07/personal-backup-strategies</id>
+    <content type="html"><![CDATA[<p>Whenever I tell people that I still have all my email from 1992,
+and source code going back to 1989, they look at me like I am some
+sort of wizard. One of those old wizard, too, because the first thing
+I hear is usually &ldquo;I was three years old in 1989&rdquo;. I guess I&rsquo;ve just
+always been good at backups, even though I have never used a
+commercial backup software in my life. Or maybe because of that, and
+because my strategy is really simple and easy to follow. I figure I
+should explain my reasoning, and maybe it&rsquo;ll help somebody else.</p>
+
+<!-- more -->
+
+
+<h2>What is your backup threat scenario?</h2>
+
+<p>Backups give you peace of mind. Depending on your fears, a different
+solution might be best for you.</p>
+
+<p>Are you trying to prevent yourself from a virus, hardware failure, or
+from burglars? Then a commercial backup software is probably the
+easiest thing to set up, and cloud backup solutions like
+<a href="https://mozy.com/free?ref=KHLLU7" title="Easy Cloud Backup">Mozy</a> are very
+easy to use. Do you have a lot of data, or don&rsquo;t trust the cloud? Then
+you probably want an external disk to store everything on. Are you
+afraid that thieves might break into your house? Store that hard drive
+off-site, maybe at your office. Afraid the government may come after
+your data? Store the drive in a foreign country, preferably one that
+is not a NATO member.</p>
+
+<p>Me, I am protecting myself against an asteroid strike that wipes out
+North America, or an Earthquake that makes California slide into the
+sea, but YMMV.</p>
+
+<h2>How big is your personal data footprint?</h2>
+
+<p>When it comes to backup, there are basically two types of data:
+Personal files that are exclusively on my own computers, and widely
+available ones that I can recover from the internet or elsewhere.</p>
+
+<p>Your resume and tax documents are a good example that falls in the
+first category. Family pictures and video (see my note about Photos,
+below) are also hard to recover once they are gone, and for the
+average person, these make up the bulk of their personal data.</p>
+
+<p>Files that are easy to recover are Movies and Music you downloaded or
+ripped. Even if the earthquake swallows your CD collection along with
+the Justin Beiber MP3s you ripped from it, you will be able to buy
+that music again, if the Asteroid hasn&rsquo;t wiped out civilization, and
+if that happens, let&rsquo;s rebuild without letting the Beiber back into
+our lives, shall we? We&rsquo;ll have bigger problems.</p>
+
+<p>Source code that is stored on github is probably mirrored widely
+across the CDNs of this world, although it&rsquo;s in the cloud, so I am
+counting it towards the personal data category.</p>
+
+<p>Adding up everything in the personal data category, I clock in at less
+than 300 GiB. In this day and age of <a href="http://www.amazon.com/dp/B00E3W16OU/ref=twister_B00EHFJJHY">terrabyte SSD
+drives</a>,
+that is a surprisingly tiny number for 30 years of personal computing
+history.</p>
+
+<h2>Collect everything in one spot</h2>
+
+<p>The reason I never lost anything is that for the longest time, every
+time I bought a new disk, I would copy the old disk into a backup
+folder on the new one before I replaced it. Eventually, I ended up
+with a recursive tree of everything, with a lot of duplication. At
+some point, I had multiple computers, and that backup folder kept
+growing and growing. At some point, I sat down and cleaned it all up,
+removed all the duplicates. You can use
+<a href="http://www.tucows.com/preview/511502/Duplicate-File-Remover">software</a>
+to help you with this, and once the duplicates are gone, organize
+everything the way you would lay it out in your &ldquo;My Documents&rdquo; folder,
+and store it into a folder on your main PC or file server. I&rsquo;ve named
+mine &ldquo;The Vault&rdquo;, and it sits on a mirrored RAID array of 300 GiB
+spinning disks. A Windows SMB share lets all of my other computers
+read and write it when I need to get something from there.</p>
+
+<h2>Off-site Backup</h2>
+
+<p>Now that I have a single folder, my backup strategy is simple: Keep
+everything in there forever, and do frequent off-site backups of this
+one folder. I have a 300 GiB external drive, and I use Microsoft&rsquo;s
+<a href="https://en.wikipedia.org/wiki/SyncToy">SyncToy</a> software to mirror my
+data from the Vault to the external drive. Since most of my data
+doesn&rsquo;t change, this is a relatively quick process, and I can automate
+it, which protects me against a failure in the server. Every time I
+travel to Europe, I bring the drive with me and exchange it for an
+identical one that&rsquo;s in my parents&#8217; basement. This is my asteroid
+bunker, and it means that my worst-case loss will be a year&rsquo;s worth of
+recent data.</p>
+
+<h2>Updating the vault</h2>
+
+<p>I treat my Vault share the way one treats the stacks in a library: It
+contains everything, but things that are in frequent use have local
+copies on other machines, too. The quality of my backup depends on me
+frequently synchronizing these local copies back to the Vault. As long
+as I keep all my folders in the same hierarchy as they are in the
+Vault (remember when I said to lay it out like the My Documents
+folder?), I can again use SyncToy to mirror any local changes back to
+the authoritative copy in the Vault.</p>
+
+<h2>Potential improvements</h2>
+
+<ul>
+<li>I don&rsquo;t do the synchronization back to the Vault often enough now, because that machine is turned off most of the time. It&rsquo;s also not automated yet. If I didn&rsquo;t have strong reservations against the cloud, I could pair this with Mozy, which lets me configure it to only backup files that are less than a year old.</li>
+<li>I do not have an automated, scheduled synchronization to the external hard drive set up, because the Vault is offline most of the time.</li>
+<li>I could put the Vault on a <a href="http://www.synology.com/events/2013_us_photographer.php?lang=us">NAS</a>, and improve both of the points above, but so far I&rsquo;ve gotten away without paying any money and just using recycled hardware.</li>
+<li>Cloud Backup is mighty convenient. I&rsquo;m planning to set up a separate server at my parents&#8217; house and possible other locations, and have the Vault synchronized to it with <a href="http://www.bittorrent.com/sync">Bittorrent Sync</a>, which gives me all the benefits of the cloud along with full control over my own data.</li>
+</ul>
+
+
+<h3>A note about Photos</h3>
+
+<p>Putting all your pictures into the cloud, whether it&rsquo;s on Facebook or
+Flickr, is no backup strategy. Aside from the obvious dangers of
+putting anything into the cloud, Internet startups come and go on a
+daily basis, their privacy and copyright terms can be <a href="http://tosdr.org/" title="Terms of Service, Didn't Read">extremely
+questionable</a>, and
+they often make downloading difficult. Ask me about the 200 pictures
+limit on my Flickr account sometime, and the 7 clicks per photo to
+download the original size&hellip;</p>
+
+<p>I am not advocating against putting your pictures online. You make
+that call. But I am telling you that this is by no means a valid form
+of backup. Consider any photo lost that you do not have a personal
+copy of.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[E-Mail Encryption]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/12/24/email-encryption/"/>
+    <updated>2013-12-24T11:00:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/12/24/email-encryption</id>
+    <content type="html"><![CDATA[<p>Here is a depressing thought: public-key encryption was around when I was in
+college in the mid-90&rsquo;s, and it&rsquo;s still not widely adopted. Instead, it&rsquo;s
+considered &ldquo;too complicated for regular users&rdquo;, and none of the major vendors
+of email solutions has made an attempt to integrate encryption into their
+software.</p>
+
+<p>As long as the NSA and Google read every one of my emails, I want to have a way
+of preserving my privacy. I&rsquo;m writing these instructions in the hope that some
+of the people I communicate will find it easier to use encryption when
+communicating with me.</p>
+
+<!-- more -->
+
+
+<h2>Using GnuPG with Thunderbird</h2>
+
+<p>PGP, or &ldquo;Pretty Good Privacy&rdquo;, is a standard for email encryption developed in
+1991, and remains the de-facto standard until today. The most popular
+implementation of the PGP standard is the Gnu Privacy Guard (commonly
+abbreviated as GnuPG or GPG). On your computer, you will need to install a <a href="http://www.gnupg.org/">GnuPG download</a> that matches your operating system.</p>
+
+<p>To integrate GnuPG into Thunderbird, you will need to install the <a href="https://www.enigmail.net/">Enigmail extension</a>.</p>
+
+<h2>Using APG on Android</h2>
+
+<p>On Android, PGP is implemented in the <a href="https://play.google.com/store/apps/details?id=org.thialfihar.android.apg">APG App</a> that I mentioned in my previous posting.</p>
+
+<h2>Inline PGP vs. PGP/MIME</h2>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Gmail With K-9, and an Identity Change]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/12/23/using-gmail-with-k9/"/>
+    <updated>2013-12-23T20:30:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/12/23/using-gmail-with-k9</id>
+    <content type="html"><![CDATA[<p>In my previous article, I described how to set up Thunderbird for use with your
+Gmail account. That solves my annoyances with the Gmail web interface, and
+allows me to use PGP encryption in my emails, something I&rsquo;ll probably write a
+post about later. However, I also have a series Android devices on which I also
+read email, and the Gmail app on them has a few of the same problems, namely the
+lack of encryption. How much does the NSA pay the major vendors so they don&rsquo;t
+implement this, and make it harder on us?</p>
+
+<p>In this article, I&rsquo;ll show you how to set up the free K-9 Mail app, and add
+a new identity to it, so we can prepare our eventual exit from Gmail altogether.
+You may not choose to do that yet, but I did.</p>
+
+<!-- more -->
+
+
+<h2>Send in the K-9 team</h2>
+
+<p>Before you install K-9, you should <a href="https://play.google.com/store/apps/details?id=org.thialfihar.android.apg">install
+APG</a>.
+It provides PGP encryption for Android, and for reasons I&rsquo;ve never understood,
+K-9 insists that it be installed first if you want to use both of them together.
+For now, forget that you did that, I&rsquo;m going to deal with encryption in a later
+posting.</p>
+
+<p>After that, install the K-9 Mail application on our phone. Get it from
+<a href="https://play.google.com/store/apps/details?id=com.fsck.k9">Google&rsquo;s Store</a>, or
+Market, or whatever your phone calls it. These app are very undemanding, and
+I&rsquo;ve installed them on anything from an old Froyo phone to the latest KitKat
+tablet.</p>
+
+<p>After you&rsquo;ve installed K-9, you&rsquo;ll have to configure it to use your Gmail
+account. As with Thunderbird, you will need to create another
+<a href="https://support.google.com/accounts/answer/185833">application-specific
+password</a> for this if you are
+using two-factor authentication. You want to use a different one, so that if you
+ever lose your phone, you can just revoke the password that it used and cut off
+access to your email.</p>
+
+<p>From the menu, choose &ldquo;add account&rdquo;, enter your full email address and the
+password, and let the app find the incoming and outgoing server settings for
+you. Just like with Thunderbird, this should happen automatically, so no
+memorizing of host names or ports required. When all is done, you&rsquo;re prompted for
+a name for the account and your own name, and taken to the account view. By
+default, your account will be set up to not poll the inbox repeatedly, so you
+might want to change the folder poll frequency in the settings to something like
+every 15 minutes. Take a look around all the settings and consider what you want
+your phone to be doing.</p>
+
+<h2>New Identity</h2>
+
+<p>I&rsquo;m ultimately trying to get out of Gmail entirely, and I have a domain that&rsquo;s
+hosted at netbeat with a catch-all email account on their POP3 mail server. It
+would be cool if I could slowly migrate to an email address on that domain, but
+I don&rsquo;t have the patience to set up my own IMAP server for it yet.</p>
+
+<p>First step in this is to configure Gmail to fetch the emails from that domain.
+I&rsquo;ve been doing this for a while now, and even though it means Google gets even
+more data about me, it was worth it for their superior spam filtering.
+Instruction on how to set up Gmail&rsquo;s Mail Fetcher can be found in Google&rsquo;s
+support pages: <a href="https://support.google.com/mail/answer/21289">Centralize mail from different accounts with Mail
+Fetcher</a>.</p>
+
+<p>The one disadvantage of this setup is that email now takes longer to be
+delivered, because on top of K-9&rsquo;s polling frequency, each message now has to
+first go to my domain host&rsquo;s servers, and then gets picked up by Gmail on a
+regular schedule (up to an hour), so you should take that article&rsquo;s advice
+and set up direct forwarding, too. How you do that differs based on your domain
+host, so you&rsquo;re on your own there. When I did it, it caused my emails to arrive
+almost instantly.</p>
+
+<p>Secondly, you&rsquo;ll want to be able to send emails through Google&rsquo;s servers from
+your new email address. Again, this is documented in the Google support pages:
+<a href="https://support.google.com/mail/answer/22370">Sending mail from a different
+address</a></p>
+
+<p>Once this works, you should have a drop-down in Gmail&rsquo;s web interface that lets
+you choose which identity you want to send email from. By using your new
+identity, you are slowly training everyone you communicate with that you&rsquo;ve got
+a new address &ndash; the address will get collected into their address books. their
+replies will be sent to it, etc. You may also want to add a signature to your
+emails that explains your new address. Just make sure not to tell the spammers
+:&ndash;)</p>
+
+<p>Back to K-9: In the account settings, under &ldquo;Sending mail&rdquo;, select &ldquo;Manage
+Identities&rdquo;, and from the menu choose &ldquo;New Identity&rdquo; to add your alternate email
+address. Then long-press on the newly created identity and choose &ldquo;Move to top /
+make default&rdquo;. K-9 will use this identity for all new messages, but in replies,
+it will default to whatever address the email went to, and not switch. Don&rsquo;t
+worry if that&rsquo;s confusing, you can always change whatever identity it chooses
+from a drop-down at the top of the composition screen, for any message you
+write.</p>
+
+<p>Thunderbird has a similar mechanism for multiple identities, and you might want
+to set it up there, too. Rather than describe it here, I&rsquo;ll just link the
+<a href="http://kb.mozillazine.org/Mozilla_Suite_:_FAQs_:_Mail_Aliases">Mozilla Knowledge
+Base</a> and hope
+you&rsquo;ll figure it out for yourself.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using Gmail With Thunderbird]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/12/23/using-gmail-with-thunderbird/"/>
+    <updated>2013-12-23T14:00:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/12/23/using-gmail-with-thunderbird</id>
+    <content type="html"><![CDATA[<p>I have had it with Gmail. The web interface is becoming more and more
+antagonistic every day, and it is my firmly help belief that Gmail is not email.
+Back in the days, Gmail was a standards-compliant service built on IMAP and SMTP,
+with a fancy web interface. A web interface that eventually became so usable, it
+convinced me that I did not actually need a desktop email application any longer.
+Those days are over. The new Compose, the inability to use it with a PGP browser
+extension, the G+ integration, the hopeless top-posting and that new thing where
+every attachment gets stored into Drive are all making me harken back to a
+simpler time.</p>
+
+<!-- more -->
+
+
+<h2>Why stick with Gmail at all?</h2>
+
+<p>It is tempting to make a radical departure and just set up my own mail service
+on my own domain. And one day, that&rsquo;s what I intend to do, but not everyone can
+do that, and I believe in taking incremental steps in the right direction. So
+the first thing I&rsquo;m doing is getting rid of Gmail the web application, but I am
+keeping Gmail the IMAP/SMTP service. I have had this email address for the last
+10 years (I signed up November 11, 2004), and it&rsquo;s become impossible to just
+stop using it overnight.</p>
+
+<h2>Thunderbird is still the best.</h2>
+
+<p>Unlike Microsoft and Google, the Mozilla Foundation seems to truly believe in
+Internet standards and extensibility, and Thunderbird is still the best desktop
+email software. It also exists on every major platform, so if I ever decide to
+abandon Windows, it will still be wherever I go.</p>
+
+<p>There is at this time no Thunderbird for Android or iOS, and I doubt that this
+will happen anytime soon. However, other email software exists, and the Android
+Gmail app is not as awful as the web application, so the mental trauma is not
+quite as high.</p>
+
+<h2>Thunderbird Setup</h2>
+
+<p>Modern versions of Thunderbird (I am running 24.2) recognize a Gmail address in
+their account wizard and they will configure the correct IMAP and SMTP server
+for you, with the correct SSL/TLS settings. If you are using two-factor
+authentication (you should!), then this is one of the cases where you need to
+use an
+<a href="https://support.google.com/accounts/answer/185833">application-specific password</a> to access
+your Google account. Tell Thunderbird to remember it. You are encrypting your
+hard drive, right?</p>
+
+<p>Next, we need to do some configuration that Thunderbird doesn&rsquo;t get right, in
+order to work around some behavior of Gmail that isn&rsquo;t like other IMAP servers.
+Go to the newly created account settings, and configure the following sections:</p>
+
+<h3>Server Settings</h3>
+
+<p>Gmail calls its IMAP folders &ldquo;labels&rdquo;, and there are two kinds, the ones that
+you defined, and the canonical ones, like Drafts, Trash, Sent Mail, etc. These
+canonical folders all live under the <em>Gmail</em> folder of the IMAP folder
+hierarchy. In this next step, we want to prevent Thunderbird from creating its
+own copy of those canonical folders, and tell it to use the ones that Gmail
+provides.</p>
+
+<pre><code>When I delete a message: (*) Just mark it as deleted
+</code></pre>
+
+<p>The Gmail server automatically manages its internal Trash folder, and you don&rsquo;t
+need to explicitly move deleted messages there.</p>
+
+<h3>Copies &amp; Folders</h3>
+
+<pre><code>When sending messages, automatically [ ] Place a copy in:
+</code></pre>
+
+<p>Leave this unchecked. Gmail&rsquo;s servers will automatically place a copy of every
+outgoing message into the <em>Sent Mail</em> folder, and making another copy will just
+create duplicates, and it really messes up the witless Gmail web interface.</p>
+
+<pre><code>Message Archives [ ] Keep messages archived in:
+</code></pre>
+
+<p>Leave this unchecked, too. Google&rsquo;s equivalent of the Archive folder is the All
+Mail label, which stores all Mail that you&rsquo;ve ever seen, and Thunderbird&rsquo;s
+&ldquo;Archive&#8221;command seems to be doing the right thing (as in, something other than
+the &#8220;Delete&rdquo; command).</p>
+
+<pre><code>(*) Keep message drafts in: (*) Other:
+</code></pre>
+
+<p>We want to keep drafts in the Gmail Draft folder, not on a local computer, so
+from the &ldquo;Other&rdquo; drop-down, choose your Gmail account, and then the Gmail/Drafts
+folder.</p>
+
+<pre><code>(*) Keep message templates in: (*) "Templates" folder in Local Folders
+</code></pre>
+
+<p>I must admit I&rsquo;ve never used Templates. There is probably an argument for
+storing them on your Gmail account, so they are shared between all your
+installations, but Gmail doesn&rsquo;t have the concept of Templates, so you&rsquo;d have to
+create a custom label for them.</p>
+
+<h3>Composition &amp; Addressing</h3>
+
+<pre><code>[ ] Compose Messages in HTML format
+</code></pre>
+
+<p>This is where it all began. People flaunting the internet mail standards. Do us
+all a favor and don&rsquo;t perpetuate that nonsense. You&rsquo;ll also want to disable this
+if you have installed PGP encryption, because those two don&rsquo;t play well together.</p>
+
+<h3>Junk Settings</h3>
+
+<pre><code>[ ] Enable adaptive junk controls for this account
+</code></pre>
+
+<p>We should not be needing spam filters, because Gmail is doing a pretty awesome
+job at filtering out junk email. It&rsquo;s one of the major reasons why people love
+it so much. Thunderbird&rsquo;s junk filters do not integrate with the server-side
+filtering of Gmail, so it&rsquo;s better to leave everything in this section
+unchecked.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[International Characters on a US Keyboard in Windows 7]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/12/23/international-keyboard/"/>
+    <updated>2013-12-23T14:00:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/12/23/international-keyboard</id>
+    <content type="html"><![CDATA[<p>Like many programmers, I use a US keyboard layout instead of my native German
+(or Scandinavian) keyboard. This makes programming easier, because I don’t need
+to put my right hand into contortions to get at the keys for angle brackets,
+curly braces, or the backslash, and I am able to use my coworkers’computers and
+vice versa (except for those Dvorak types). But sometimes, I want to write a
+letter home, and I need the Umlauts and all that other stuff. There are four
+basic solutions to this, all of which don’t work for me, and the final one that
+I use today (skip right to the end if that is all you want to see).</p>
+
+<!-- more -->
+
+
+<h2>The Windows language bar</h2>
+
+<p>I could install three keyboard layouts, and switch between them with the Left
+Alt + Shift macro, as the Windows designers intended. Personally, I hate this,
+because it’s designed as a per-application setting, but my brain does not
+remember per-application state. The Alt-Shift combo is one that I frequently hit
+by accident, and the task bar indicator only shows you its state on hover, while
+the floating version of the language bar is a huge eyesore.</p>
+
+<h2>Key codes</h2>
+
+<p>Windows allows you to key in characters by their code point. Alt + 132 is &auml;, for
+example. I would have to learn 14 of these three-digit combinations, and they
+only work on the numeric keypad. This is a serious impediment to typing speed,
+and in fact it’s easier to remember and faster to type out the HTML entity for
+each of them. Most laptops, and my FILCO keyboard, do not have a numeric keypad,
+so that option is out for other reasons, too.</p>
+
+<h2>AllChars</h2>
+
+<p>For a very long time, I was a huge fan of
+<a href="http://allchars.zwolnet.com/">AllChars</a>, which is a small program that runs in
+the task bar and adds a &ldquo;compose&rdquo; key. So if you wanted to type an &auml;, you type
+the sequence ESC &quot; a. Sadly, this little piece of open source magic stopped
+working reliably with later versions of Windows, and it was causing very erratic
+behavior, so I had to stop doing that.</p>
+
+<h2>US-International keyboard layout</h2>
+
+<p>There is a special version of the US English keyboard layout called United
+States-International. You can install it from the Control Panel, just like you
+would install a German or Norwegian layout. In this layout, international
+(mostly Western European) characters are assigned to combinations of Right Alt +
+character, with special characters roughly located in the vicinity of
+similar-looking ASCII characters. &Auml; is Right-Alt + Q, for example.
+Alternatively, you can compose keys, because a number of keys are &ldquo;dead keys&rdquo;:
+typing ~ + n gives you &ntilde;. I don’t need those dead keys, they get in the way:
+when trying to type an apostrophe, I need to type the ‘ followed by a space, or
+I risk it being conjoined with the following character.</p>
+
+<h2>International layout without dead keys</h2>
+
+<p>Microsoft has published a tool that allows anyone to edit their own keyboard
+layout, and there is a kind soul who felt the same way that I did about the dead
+keys, and published his solution. This is the solution I use today, <a href="http://freeman2222.mywebcommunity.org/us-intnd.zip">United
+States-International (no dead
+keys)</a>. It behaves exactly
+like a US keyboard, with the exception of the Right-Alt key being a modifier to
+access the international characters. I have this set as my default keyboard
+layout on all my Windows computers.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Helios, First Sprint Retrospective]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/09/29/helios-first-sprint/"/>
+    <updated>2013-09-29T22:51:35+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/09/29/helios-first-sprint</id>
+    <content type="html"><![CDATA[<p>This month, I started developing a new Atlantis game, code-named Helios. I am
+hoping that other developers will join my effort eventually, so I am spending
+more time than usual on project management and documentation. Today sees the
+end of my very first sprint, and I am pretty stoked about how much I got done.</p>
+
+<!-- more -->
+
+
+<h2>Project planning</h2>
+
+<p>In agile development, the project gets broken down to sprints &mdash; intervals of time
+that are easy to plan for. In my case, I am planning to do a print per month,
+because it forces me to prepare a ton of design work, and because my time is
+easier to predict for a month than a week. I think I can commit to 5 full days
+of work during a month while still having a job.</p>
+
+<p>For each of the sprints, I pick a few user stories, break them down to
+bite-sized tasks which can be finished in less than a day, and assign as many of
+these to the sprint as I think are possible to finish in a month. Since the
+tasks are small and the design for their user story is complete and written
+down, new contributors should be able to pick up any one of them that they feel
+comfortable working on. For this purpose, I keep my
+<a href="https://trello.com/b/EzbIyrUS/new-atlantis">task board on Trello</a> updated.</p>
+
+<p>Even as a single-team developer, this helps me focus on my work. There is
+satisfaction in seeing how many tasks I have moved, and I never wonder what
+needs to be done next, so I don&rsquo;t work on stuff that isn&rsquo;t important.</p>
+
+<h2>What got done</h2>
+
+<p>I have planned an aggressive
+<a href="https://github.com/badgerman/atlantis/wiki/Helios-Game-Design-Document">list of features</a>
+for Helios, and I wrote Design rationale and a task breakdown for all of them.
+This gives me material for all my future sprints until the start of the game.</p>
+
+<p>The core feature I worked on for first was the most difficult one. I believe in
+addressing risk head-on, so I worked on multi-hex movement for ships. Talking to
+the atlantisdev folks helped me narrow the scope to only ships, which don&rsquo;t have
+to worry about guards, terrain modifiers, and other complications to the source.
+I also decided to delay the new action system I have planned, and in the end it
+turned out to actually be pretty straightforward.</p>
+
+<p>I got a lot of other small and large things shipped. My other focus was making
+more things configurable on a per-game basis, by moving them into the json
+configuration file:</p>
+
+<ul>
+<li>players start with 10 men and $2000, which are configurable values.</li>
+<li>the width/height of the map is configurable, but stays fixed after world
+generation, and does not need to be recalculated every time the data file is
+loaded.</li>
+<li>Regions have a unique id, and the neighbor-graph of all regions is stored in
+the data file, which makes coordinates a merely cosmetic attribute of a
+region. They are no longer needed to rebuild the region::connect array.</li>
+<li>All regions are stored in a hash table, so they are fast to look up if you
+know their unique ID.</li>
+<li>Ship classes are configurable, with speed, cost, and capacity. The game is no
+longer limited to only three types of ship, although the Helios game will
+probably still have a longboat, clipper, and galleon.</li>
+<li>I killed the original world generator, leaving only the code that was used in
+Atlas. This will eventually be modified, too. It looks like the next sprint is
+going to have world generation as one of its themes.</li>
+<li>Terrain types are configurable. For Helios, all production in a region has
+been reduced by 80%.</li>
+<li>The code compiles on stock Ubuntu 13.04 again.</li>
+<li>I compiled and familiarized myself with the ALH code.</li>
+</ul>
+
+
+<h2>What did and didn&rsquo;t work</h2>
+
+<p>The atlantisdev group is a great sounding board for ideas. I am not a game
+designer who creates things in a vacuum, and talking about my plans with other
+people helps me a lot.</p>
+
+<p>I am still looking for other developers to help me. Two people have stepped up,
+and I have added them as collaborators to the Trello board, but none of them has
+started on any task work.</p>
+
+<p>Communication with other developers is mixed. I started an #atlantis IRC channel
+on irc.lunarnet.org, but only one person has been showing up regularly.
+Hopefully, this is going to get better. Please, if you are interested in
+Atlantis developments, even just as a lurker, I want to talk to you.</p>
+
+<p>Investigating ALH helped me get some ideas about world coordinates sorted out,
+realizing that the code didn&rsquo;t need them, and as long as the client can draw a
+map, neither do the players. I am probably going to let players choose how they
+want them laid out on a per-faction basis, with a default preference for the
+ALH layout.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Atlas: Postmortem Notes]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/09/20/atlas-postmortem/"/>
+    <updated>2013-09-20T00:32:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/09/20/atlas-postmortem</id>
+    <content type="html"><![CDATA[<p>Atlas, my game of Atlantis 1.0 (with small modifications) is finally ending in
+turn 22, by vote of the remaining players. There are 6 factions left, and it&rsquo;s
+time to look at what worked and what didn&rsquo;t. I kind of knew a lot of this
+beforehand (A1 is pretty well-known), but I have not seen a critical
+retrospective of past games, and think it might be constructive to do a
+write-up. I know a lot of this is fixed in A5 or Eressea, but remember I wanted
+to go back to basics and see what the world was like 20 years ago when Russell
+Wallace first created it.</p>
+
+<!-- more -->
+
+
+<h2>What worked</h2>
+
+<ol>
+<li>The game runs smoothly on all three types of machines I used: Windows (x64),
+Ubuntu (x86) and Raspbian (ARM).</li>
+<li>I have a very good setup for processing turns.</li>
+<li>I can run multiple games side-by-side on the same machine (untested).</li>
+<li>Kept a regular schedule, the automatic turns worked (almost) every weekend.</li>
+<li>Few serious bugs: I had to re-run only 2 turns.</li>
+<li>Hex maps: major new feature that didn&rsquo;t break.</li>
+<li>JSON for reports: One player wrote a JavaScript mapping tool, and I wrote an order-template generator.</li>
+<li>I killed the TEACH command, which reduced a ton of micro-optimization.</li>
+<li>open-source game meant I was getting bug reports from people who read the code!</li>
+</ol>
+
+
+<h2>What didn&rsquo;t work</h2>
+
+<ol>
+<li>The map generator created too many unconnected continents.</li>
+<li>Some players were on an island all by themselves.</li>
+<li>Community: There wasn&rsquo;t much of a sense of community. I think that a forum
+does not replace a weekly in-world newspaper.</li>
+<li>The world in general was too big: I spawned three hexes per player, but in
+the endgame, my faction is spread over two dozen hexes. Player drop-off really,
+really hurts.</li>
+<li>All regions are exchangeable, and mostly the same. I recruit peons in every
+region, I tax as much as I can, and I build longbows/ships in forests vs.
+swords/armor in mountains. There is no strategic component to terrain at all.
+Why are swamps even in the game?</li>
+<li>Movement is incredibly slow. Getting raw materials out of a mountain or
+troops to the other end of the world is arduous.</li>
+<li>Micromanagement: I spent way too much time writing orders to pass money and
+materials around between units in the same region.</li>
+<li>Way too many units! The way skills work make it beneficial not to merge
+similar units, and the two major factions today both have in excess of 100
+units.</li>
+<li>Ships take too long to build. There are two longboats and one clipper, and as
+many again that are still under construction.</li>
+<li>Buildings: ditto. A single faction built all three buildings that exist in
+the world.</li>
+<li>There is a huge surplus of weapons and money. Taxation and Work are the main
+sources of income.</li>
+<li>There hasn&rsquo;t been a large-scale war, and even though factions have
+researched all spells on levels 1+2, they haven&rsquo;t gotten to use them.</li>
+<li>Community tool building: There is only one mapping tool that I know of, and
+the player kept it to himself.</li>
+<li>Hex directions: I gave the two additional directions unconventional names
+(Mir and Ydd for NorthWest and SouthEast, respectively), so as not to have four
+directions start with the same 2 letters (abbreviations are frequently used by
+players when moving). This turned out to confuse people.</li>
+<li>Wrap-around world. While it meant that nobody was at the edge of the map,
+this hardly mattered (no ships), and players were confused about the relative
+location of region (17,17) to (0,0). Not having tools made this worse.</li>
+<li>The best strategy I observed was to send scout units out to look for players
+that never made a turn. Each crunchy starting unit contains a yummy core of
+$5000, which makes it worth to invest your entire starting capital to this rush
+strategy.</li>
+</ol>
+
+
+<p>Did you play? The above are obviously just my impressions, but if you played and
+disagree, or have something to add to my list, please add to it. I like
+flattery, but also enjoy serious criticism. I&rsquo;m doing this to learn, after all.</p>
+
+<h2>What&rsquo;s next?</h2>
+
+<p>The game is playable, and anyone who would like to experience it should be able
+to just pull it from github and play it. I think that in itself is a huge
+success. At the same time, I didn&rsquo;t add a lot of bloat to it: You don&rsquo;t need an
+XML library or OpenGL to run it, in fact my Raspberry Pi compiles it straight
+from a fresh checkout :&ndash;) I wouldn&rsquo;t mind doing more development, but it would
+take a bigger group of hackers. I have a huge list of ideas for features, in
+fact, just not enough time to write them all. Let me list off what I came up
+with during my hiking vacation (got to make the brain do something when you&rsquo;re
+walking in the rain for 5 hours):</p>
+
+<ol>
+<li>Movement is kind of my #1 pet peeve. The current system makes ships
+pointless, and there is no way to make a haste spell, or give riders a movement
+advantage, or differentiate terrains. A system for multi-step moves needs to be
+added.</li>
+<li>Micromanagement sucks the joy out of the game. I&rsquo;m currently favoring
+centralized upkeep from a faction-wide treasury, and city-based taxation instead
+of local TAX orders.</li>
+<li>Visual aids. I was toying with the idea of a GL renderer for maps, but did
+not get very far.</li>
+<li>Smaller ships. They take too long to build, and exploration only kicks off
+when everything has already been discovered by land. Two types of ship are
+probably enough.</li>
+<li>Actual empire-building. The current buildings are bunk, but I have a design
+for cities in my head, as economic centers of a player&rsquo;s empire, where taxation
+and recruitment are located.</li>
+<li>Fewer, better, units. I want to do Olympia-style stacks of nobles and common
+units, and I have most of that code already written.</li>
+<li>Starting a player off with more units and less money to take out the rush
+strategy.</li>
+<li>Make initial hiring of units for a rush harder by limiting recruiting to once
+every season (every N turns), from cities only. I&rsquo;m sure that has other fun
+side-effects, too.</li>
+<li>Brainstorm on strategic value of terrain types. Movement penalties,
+obviously. Limit ships to landing in plains only.</li>
+<li>New combat rules, with more strategic bonuses from nobles and unit stacking.</li>
+<li>Eliminate skills in favor of unit archetypes. Archers, Knights, Pikemen,
+etc. have innate combat bonuses, and you recruit them for a combined price of
+money + items.</li>
+<li>No more money on units. All money is locked in the treasury of a city, and
+cities pay upkeep or recruit units.</li>
+<li>No more individual weapons and armor carried around by the units. If you
+recruit an Archer, it is assumed that she has a longbow, and certain fixed
+combat stats, plus situational modifiers. Some exceptions: mounts (horses,
+griffons) for movement bonuses, and money, to transfer it between cities. It may
+be that only nobles can carry money.</li>
+</ol>
+
+
+<h3>Want to help?</h3>
+
+<p>So what I&rsquo;m proposing is a pretty radical change of the game design, and the
+outcome is probably more Olympia than Atlantis 5 or Eressea, with a few actually
+different elements. My time is sadly limited, to the point where for the past
+weeks I have delegated the majority of my faction&rsquo;s order writing to somebody
+else (yes, the micro-management is that bad).</p>
+
+<p>My past experience with trying to build a new games has been mixed. In Eressea,
+we were three programmers with quite different ideas about the game we wanted to
+build, and the end result was pretty successful. Building a new game from the
+Eressea code has failed at least twice now, either because I was the only
+programmer, or because the baggage of the old game was so big. That experience
+was my main motivation to look at A1 again. Which means the ideal people I would
+like to work with check these requirements:</p>
+
+<ul>
+<li>Programmers. Adding non-programmers to a project increases the chatter, and
+does not increase actual productivity. Knowing what&rsquo;s possible in the code base
+should inform what features are designed :&ndash;)</li>
+<li>Seasoned C programmers. Portable C99 is my favorite language, and the game is
+always going to be C at its core. I don&rsquo;t like C++ all that much, please do not
+suggest it.</li>
+<li>Atlantis Players. I would still want to run new games upon reaching feature
+milestones, and developers should play in those games to see what works and what
+doesn&rsquo;t.</li>
+<li>Basic computer skills. Must be able to set up their own development machine,
+know how to use IRC, ssh, git and a compiler.</li>
+<li>Must be able to spell and form complete sentences. It&rsquo;s sad that this needs
+to be said, but this is the world we live in.</li>
+</ul>
+
+
+<p>If you feel that you match this profile, and you have time and energy to work
+on, drop me a note, and I&rsquo;ll see if there is enough of a response to kick this
+off. It may not be today or this month, consider this offer good for a while.</p>
+
+<p>Apart from people to work on a new game, I&rsquo;d also like to work on better
+tooling. The ideas I have been tossing around are a GUI client, compatible JSON
+reports for A5 and Eressea (for cross-game tool sharing), a unit scripting tool
+(Lua), and a mobile app (at least a map). There&rsquo;s something to be said for
+sharing this kind of work among as many games as possible, and I&rsquo;m favoring
+things that are interoperable.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Solved: Irfanview icons.dll on Windows 7]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/06/30/irfanview-icons-dll/"/>
+    <updated>2013-06-30T06:47:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/06/30/irfanview-icons-dll</id>
+    <content type="html"><![CDATA[<p>I have used <a href="http://www.irfanview.com">Irfanview</a> as my image viewer
+for many, many years, and one thing that it does well is customize the
+windows explorer icons for supported file types through an icons.dll
+file. There is a good explanation of how to make this work <a href="http://emilio.fobby.net/features.php?g=1">at
+emiliolab</a>.</p>
+
+<!-- more -->
+
+
+<h2>Windows 7</h2>
+
+<p>There are two problems that I had with this explanation on Windows:</p>
+
+<ol>
+<li><p>you cannot write to anywhere inside C:\Program Files (x86)
+without administrator permissions, so 7-zip fails to extract the
+icons.dll to the Plugins directory. Extract the file to the desktop
+instead and copy it manually.</p></li>
+<li><p>Irfanview needs administrator permissions to set the icon for a
+file type (it has to write to the registry). So in order to change the
+preference, start Irfanview by right-clicking it, and select &ldquo;Run as
+Administrator&rdquo;.</p></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Bittorrent Sync on Android]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/05/15/btsync-on-android/"/>
+    <updated>2013-05-15T17:47:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/05/15/btsync-on-android</id>
+    <content type="html"><![CDATA[<p>In <a href="http://www.twigtechnology.com/blog/2013/05/14/i-heart-btsync/">my previous blog post</a>,
+I raved about how much I love Bittorrent Sync (BTSync). And while it
+is true that for most of my use-cases, it is superior to Dropbox,
+there are a few things Dropbox does that BTSync doesn&rsquo;t do out of the
+box. Two of these use-cases are related to mobile devices: I want to share
+folders with my phone, and synchronize photos taken with the phone to my PC.</p>
+
+<!-- more -->
+
+
+<h2>Sharing Folders with my Phone</h2>
+
+<p>There are <a href="https://matt.bionicmessage.net/blog/2013/04/27/Running%20BitTorrent%20Sync%20on%20your%20(rooted)%20Android%20device">inofficial ways</a>
+of getting btsync to run on Android devices, but I&rsquo;m trying to solve
+this problem without rooting the phone, and anyhow, the bittorrent
+protocol would be insane to run on my data plan. My current solution is
+a hybrid: I am creating a <em>Phone</em> folder in my Dropbox that gets synced
+with my phone through the Dropbox app. This obviously means that a copy
+has to live in the cloud, and I lose the security benefits I just gained.
+Then I add that folder on my PC&rsquo;s Dropbox to the folders synchronized
+with BTSync to share it across all my PCs, and anything I drop into
+the folder on any PC, even one that does not have Dropbox installed,
+is transferred to the phone.</p>
+
+<p>In my setup, I have a Desktop PC that is (almost) always on, a Laptop
+that doesn&rsquo;t have Dropbox installed, and an Android phone running the
+Dropbox app. This is what is going on:
+<img class="left" src="http://www.twigtechnology.com/images/btsyncdb.png" width="594" height="514"></p>
+
+<h2>Synchronizing new Photos to my PC</h2>
+
+<p>This is almost exactly the inverse problem, and has the same solution:
+When I take a picture on my phone, the Dropbox app has an option to
+automatically add that picture to a &ldquo;Camera Uploads&rdquo; folder. This is
+of course synchronized with the dropbox servers in the cloud and my
+Desktop PC, where I share the Camera Uploads folder through BTSync,
+and that way, I get it on my Laptop, too.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[BTSync, Dropbox Alternative]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/05/14/i-heart-btsync/"/>
+    <updated>2013-05-14T08:19:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/05/14/i-heart-btsync</id>
+    <content type="html"><![CDATA[<p>Dropbox is a revolutionary product. It has made it simple for anyone
+to share files between computers, access those files from a phone,
+automatically load photos from my phone onto my computer, and make it
+easy to share files publicly. Who needs USB sticks anymore?</p>
+
+<h2>Why would I even want to quit Dropbox?</h2>
+
+<!-- more -->
+
+
+<p>Dropbox comes with some strings attached that I don&rsquo;t like. There
+is no client for my Raspberry Pi, for example. Every file I share is
+also uploaded to the cloud, and while they score 4 out of 5 stars in
+the <a href="https://www.eff.org/who-has-your-back-2013">EFF&rsquo;s privacy rankings</a>,
+there is no technically enforced guarantee that my data isn&rsquo;t shared
+with others. They have been in the news with
+<a href="http://www.zdnet.com/dropbox-gets-hacked-again-7000001928/">security incidents</a>
+that make it clear files on their service are not encrypted. In fact,
+by the nature of how their software works, they cannot be.</p>
+
+<h2>Bittorrent Sync (BTSync)</h2>
+
+<p><a href="http://labs.bittorrent.com/experiments/sync.html">BTSync</a> is a software that sets up a private swarm of computers that
+share folders between them, just like regular bittorrent clients share
+the files defined in a torrent among them, except that changes in the
+folder are synced, too. It&rsquo;s free, easy to set up, and secure by
+design. There is no cloud server that keeps a copy of all my data, and
+as long as at least one machine in the swarm is reachable, I can sync
+my folder to a new machine. Folders are shared by exchanging a secret
+key, a short alphanumeric string, and computers discover each other
+either on the local LAN or over the internet.</p>
+
+<p>BTSync can share multiple folders, anywhere in the file system (no
+central Dropbox folder here), with different people. I can share the
+baby pictures with Mom and Grandma, travel plans with the rest of my
+group, music with the living room computer, and a public folder with
+my web server, or any other combination.</p>
+
+<h3>Example use: Hack The Future</h3>
+
+<p>For Hack The Future, I have a folder of all the installers for
+software that we mentor. It&rsquo;s shared between the loaner laptops we
+have, but it&rsquo;s easy to share that folder with somebody else, and
+rather than downloading big installers over a museum&rsquo;s slow internet
+connection, the new machine will pull in everything from the local
+network, with the existing computers sharing the load.</p>
+
+<h3>Example use: Raspberry Pi</h3>
+
+<p>I said earlier that my complaint about Dropbox was that there is no
+client for my Raspberry Pi. BTSync has an ARM client, and I use it to
+seed folders that I want to have access to at any time. The Pi is my
+only &ldquo;always on&rdquo; machine, and takes over the role of the Dropbox cloud
+servers.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Type-safe Struct Wrappers in C]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/05/09/type-safe-struct-wrappers-in-c/"/>
+    <updated>2013-05-09T19:41:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/05/09/type-safe-struct-wrappers-in-c</id>
+    <content type="html"><![CDATA[<p>Lately, I find myself writing more and more code that uses void* pointers as
+handles to implementation-specific data. This can get confusing when there is
+more than one type of handle. Imagine we have these two types:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="kt">void</span> <span class="o">*</span><span class="n">HBITMAP</span><span class="p">;</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">void</span> <span class="o">*</span><span class="n">HWINDOW</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It is then possible to assign a value of type HBITMAP to a variable of type
+HWINDOW, with no complaints from the compiler.</p>
+
+<!-- more -->
+
+
+<p>Let me show you some example code to illustrate:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="kt">void</span> <span class="o">*</span><span class="n">HBITMAP</span><span class="p">;</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">void</span> <span class="o">*</span><span class="n">HWINDOW</span><span class="p">;</span>
+</span><span class='line'><span class="n">HWINDOW</span> <span class="nf">CreateWindow</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</span><span class='line'><span class="n">HBITMAP</span> <span class="nf">CreateBitmap</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</span><span class='line'><span class="kt">void</span> <span class="nf">DestroyBitmap</span><span class="p">(</span><span class="n">HBITMAP</span><span class="p">);</span>
+</span><span class='line'><span class="kt">void</span> <span class="nf">DestroyWindow</span><span class="p">(</span><span class="n">HWINDOW</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">HWINDOW</span> <span class="n">wnd</span> <span class="o">=</span> <span class="n">CreateWindow</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">HBITMAP</span> <span class="n">bmp</span> <span class="o">=</span> <span class="n">CreateBitmap</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">DestroyBitmap</span><span class="p">(</span><span class="n">wnd</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">DestroyWindow</span><span class="p">(</span><span class="n">bmp</span><span class="p">);</span>
+</span><span class='line'>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The C compiler will compile this without a warning, even though I obviously
+mixed up the arguments to the Destroy calls.</p>
+
+<p>The goal of today&rsquo;s excercise is to get a warning from the compiler. While C
+does not distinguish different typedef&rsquo;s that map to the same internal type
+as multiple types, it does recognize different structs. So we&rsquo;ll define our
+handle-types like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span> <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span> <span class="p">}</span> <span class="n">HBITMAP</span><span class="p">;</span>
+</span><span class='line'><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span> <span class="kt">void</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span> <span class="p">}</span> <span class="n">HWINDOW</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With that change, these two are different types, and the compiler will give
+us an error message:</p>
+
+<pre><code>$ gcc -Wall -c types.c
+types.c: In function ‘main’:
+types.c:11: error: incompatible type for argument 1 of ‘DestroyBitmap’
+types.c:12: error: incompatible type for argument 1 of ‘DestroyWindow’
+</code></pre>
+
+<p>Note that these types are just as big as the void* in the struct (a struct
+causes no additional memory overhead), so copying them is no less efficient.
+Assignment works just like before, because C assigns structs by copying.</p>
+
+<p>This elegant little epiphany was brought to me by <a href="http://luminance.org/">Kevin</a>
+and Imran, who is fanatic about type-safety, and was doing this to basic types
+like int, float and char, to avoid accidental implicit conversion between them.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Invalid Byte Sequence in UTF-8]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/04/28/invalid-byte-sequence-in-utf-8/"/>
+    <updated>2013-04-28T14:30:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/04/28/invalid-byte-sequence-in-utf-8</id>
+    <content type="html"><![CDATA[<p>I finally made the switch to octopress this week, and when I was
+importing some old blog posts, I got this gem of an error message:</p>
+
+<pre><code>YAML Exception reading 2012-05-28-prefix-search.markdown: invalid byte
+sequence in UTF-8
+</code></pre>
+
+<!-- more -->
+
+
+<p>That&rsquo;s surprisingly useless when you&rsquo;re not telling me what line it&rsquo;s
+on! The ruby callstack also does nothing! There is literally no other
+way to fix this than to bisect the blog post and rebuild the blog
+after each change, which currently takes 80 seconds. After a lot of
+waiting, I finally naoorwed it down to a single unicode \240
+whitespace character that somehow snuck into the text during the
+export from tumblr.</p>
+
+<p>Ruby is not scoring any points in my book today.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Stencyl at Hack the Future 6]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/01/16/stencyl-at-htf6/"/>
+    <updated>2013-01-16T11:29:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/01/16/stencyl-at-htf6</id>
+    <content type="html"><![CDATA[<p>Last Sunday saw another installment of our
+<a href="http://hackthefuture.org/" title="Hack The Future">popular children hackathon</a> at the Tech
+Museum in San Jose. We get a room full of middleschool students, pair them with
+hacker mentors, and let them play with all kinds of technology &ndash; programming,
+electronics, robots, that sort of fun stuff.</p>
+
+<p>I had decided that I wanted to show them how to make flash games in &lt;a
+<a href="http://www.stencyl.com/" title="Stencyl">Stencyl</a>. It turned out to be a super popular
+station, I feel like I gave a lot of kids the gift of game-making to take home,
+and feedback was positive. Stencyl got mentioned as a highlight in quite a lot
+of our feedback forms.</p>
+
+<!-- more -->
+
+
+<p>What really worked was knowing the tool that I was teaching, and having a plan
+for how to introduce the kids to it. Stencyl is a game programming framework,
+but I figured out that &ldquo;game&rdquo; is the fun part of that, and &ldquo;programming&rdquo; is more
+of a necessary evil. Except it&rsquo;s not immediately necessary: The secret sauce to
+my table was to use the pre-made example games in Stencyl (particularly the
+run-and-gun game and the angry birds clone), and use them as a basis for
+exploring the possibilities of Stencyl.</p>
+
+<p>Very much like the Pong and Chess Javascript games I&rsquo;d used earlier, this gives
+you a thing that already works: Starting with a single-level Angry Birds game
+gives you something you can play immediately, and because the kids have all
+played it on their phone, they know immediately that it is incomplete and have
+ideas on how it should be made better. And the first steps to making it better
+involve making content, not features: Everyone started building their own levels
+(the built-in physics are fun, that also helps), and eventually got to a point
+that needed a small bit of programming (transitioning from one level to the
+next), so by the time they got in touch with the scratch-like language, it was
+because they wanted to solve a very specific problem, and were already quite
+familiar with how the game was constructed.</p>
+
+<p>This was totally a recipe for making my life easier, too: I had to install the
+game on their computer (bringing a USB stick saved my life), get them started
+with the game and show them the level editor, and they&rsquo;d be self-sufficient for
+the next 30 minutes. I will probably run this station exactly the same way again
+next time. What didn&rsquo;t work well was when the kids wanted to make their own art:
+The built-in image editor is not very good, didn&rsquo;t work at all on Linux, and
+making game art takes a LOT of time during which you&rsquo;re not really learning
+something about making games. I found it was best to steer away from that and
+make them recycle the existing assets in creative ways.</p>
+
+<p>Almost all the kids at my table installed Stencyl on their own computers, and I
+feel positive that they&rsquo;ll work on their game (pun intended) until the next HtF,
+because they clearly had fun. It was great that Stencyl works on Mac, Linux and
+Windows, because I had about equal amounts of each come to my table, and it
+would have been a shame to turn someone away.</p>
+
+<p>Sore point that I want to improve: I didn&rsquo;t get to show anyone how easy it is to
+embed the game they were making on a web page. I think that the ability to share
+their games with friends at school might encourage them even more to keep
+working on their project between events. Finding an easy way to share games is
+something I want to do before Hack the Future 7, which is going to be at the
+Computer History Museum in Mountain View on April 20.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Solved: File Marked as Permanent Failure on Server]]></title>
+    <link href="http://www.twigtechnology.com/blog/2012/05/31/solved-file-marked-as-permanent/"/>
+    <updated>2012-05-31T19:28:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2012/05/31/solved-file-marked-as-permanent</id>
+    <content type="html"><![CDATA[<p>Google Music has this annoying problem where it will sometimes barf on your MP3
+files with the error message you see above. And it won&rsquo;t tell you what&rsquo;s wrong,
+either. The internet doesn&rsquo;t know, either.</p>
+
+<!-- more -->
+
+
+<p>So I set out to take those unprocessed files and apply any change to them I
+could think of, until one of them made the upload work. And the answer is
+(drumroll): Bad VBR headers. I suspect these are created by bad MP3 encoders, in
+my case by LAME3.99r.</p>
+
+<p>To fix this, you can install Foobar2000 (still the best multi-format Swiss army
+knife of a music player), and perform &ldquo;right click on the file &ndash;> Utilities &ndash;>
+Fix VBR MP3 header&rdquo;. After you rewrite the file, Music Manager will detect that
+it has changed, find it to be no longer broken, and upload it.</p>
+
+<p>You&rsquo;ll want to open up <code>%LOCALAPPDATA%\Google\MusicManager\FailureReport.txt</code> and
+scan this for all the files that MusicManager complained about, then fix the MBR
+headers on those.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Prefix Search, Part 3: More Fun With Tries]]></title>
+    <link href="http://www.twigtechnology.com/blog/2012/05/28/prefix-search/"/>
+    <updated>2012-05-28T16:49:49+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2012/05/28/prefix-search</id>
+    <content type="html"><![CDATA[<p>In my last post, I demonstrated that crit-bit trees are really fast. This time,
+I want to talk a little bit about my specific implementation of these tries, and
+some interesting applications you can use them for.</p>
+
+<!-- more -->
+
+
+<p>I also want to acknowledge some of the prior art that I looked at before
+deciding to roll my own implementation. Professor Bernstein himself has written
+an implementation himself for his portable qhasm assembler. But since it&rsquo;s part
+of a larger software product, I didn&rsquo;t want to disentangle it. Adam Langley has
+an implementation on <a href="https://github.com/agl/critbit">his github</a> with
+some outstanding documentation that was very useful, but it only stores
+zero-terminated strings, not arbitrary data. While I didn&rsquo;t read his code too
+closely to keep my own implementation challenging, I did steal the clever
+bit-mask trick from it.</p>
+
+<h2>More Things To Do With Tries</h2>
+
+<p>While they are really good at string lookup, what crit-bit trees are best at is
+finding strings with a common prefix. I implemented two separate functions for
+this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span> <span class="nf">cb_find</span><span class="p">(</span><span class="n">critbit_tree</span> <span class="o">*</span> <span class="n">cb</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span> <span class="n">key</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">keylen</span><span class="p">);</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">cb_foreach</span><span class="p">(</span><span class="n">critbit_tree</span> <span class="o">*</span> <span class="n">cb</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span> <span class="n">key</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">keylen</span><span class="p">,</span>
+</span><span class='line'>    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">match_cb</span><span class="p">)(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span><span class="p">),</span> <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The first function is straightforward, it looks for an exact match of the first
+<code>keylen</code> bytes of <code>key</code> in the given tree. The second function
+calls the <code>match_cb</code> callback on every match, which is a much easier
+pattern to implement than trying to return all matches. Where would you store
+them? Dynamic memory allocation is right out, of course. I compromised a bit by
+writing the <code>b_find_prefix</code> function, which takes a buffer supplied by
+the caller, but beare that paging through the results by calling it repeatedly
+is quadratic in complexity, so you shouldn&rsquo;t do that. It&rsquo;s really just a hack.</p>
+
+<h2>Use As A Fast Key-Value Store</h2>
+
+<p>One really nifty thing that I have been using this code for is as a fast
+key-value store. You could insert a couple of strings like &ldquo;config_value=42&rdquo; in
+the tree and look for the first match with the prefix &ldquo;config_value=&rdquo;. There are
+two wrapper macros in critbit.h to simplify this, and being able to store data
+other than zero-terminated strings means I am not limited to storing string
+values. Here&rsquo;s some example code that shows their use:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span><span class='line'><span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">20</span><span class="p">];</span>
+</span><span class='line'><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">key</span> <span class="o">=</span> <span class="s">&quot;herpderp&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="kt">void</span> <span class="o">*</span> <span class="n">match</span><span class="p">;</span>
+</span><span class='line'><span class="kt">size_t</span> <span class="n">len</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">len</span> <span class="o">=</span> <span class="n">cb_new_kv</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">),</span> <span class="n">buffer</span><span class="p">);</span>
+</span><span class='line'><span class="n">cb_insert</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cb</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">len</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">cb_find_prefix</span><span class="p">(</span><span class="o">&amp;</span><span class="n">cb</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">match</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">cb_get_kv</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>What these macros essentially do is this:</p>
+
+<ol>
+<li><code>cb_new_kv</code> creates a (key,0,value) string inside buffer.</li>
+<li>Once you insert it, you can search for it by prefix-search for the key plus its zero-terminator.</li>
+<li>Finally, use <code>cb_get_kv</code> to extract the value from the first match.</li>
+</ol>
+
+
+<h2>Testing</h2>
+
+<p>I approached this project with a test-first attitude, writing tests before
+writing the actual implementation, and fixing bugs until the tests passed. I
+wrote almost as many lines of tests for this as I wrote actual code, and it
+still wasn&rsquo;t enough &ndash; one or two small issues slipped through. Lots of pointers
+and memory-pokery is always tricky, and I think this is one of those cases where
+it should be undisputed that unit tests are just incredibly useful.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Prefix Search, Part 2: Crit-bit Trees]]></title>
+    <link href="http://www.twigtechnology.com/blog/2012/05/26/prefix-search/"/>
+    <updated>2012-05-26T10:35:33+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2012/05/26/prefix-search</id>
+    <content type="html"><![CDATA[<p>The problem with the prefix search problem I described in my previous post is
+that there is most likely no good data structure in your language to do this
+with. There certainly isn&rsquo;t one in C. But the good news is that we get to build
+our own! How often do we still get to write data structures from scratch in this
+day and age? And when is it ever a good idea?</p>
+
+<!-- more -->
+
+
+<p>Of course, you should always try to go with the simplest thing that works: In my
+case, that&rsquo;s building an array of your million strings, and to search for a
+prefix, just strncmp each entry. We&rsquo;ll benchmark that, see how well it performs,
+and use it as our baseline for a good implementation.</p>
+
+<p>Have a look at the <a href="https://github.com/badgerman/critbit/blob/master/naive.c">naive
+implementation</a> that I
+wrote. Finding a needle in a haystack of a million strings takes almost no time
+at all, but building the array takes a while, so I&rsquo;ll just do 1000 searches,
+each for a single needle, in a set of a million strings, followed by 1000
+searches for a prefix that occurs exactly 11 times:</p>
+
+<pre><code>$ bin/naive -x 100 1m 111111
+init: 0.30s
+find: 0.82s
+$ bin/naive -x 1000 1m 111111
+init: 0.26s
+find: 7.51s
+</code></pre>
+
+<p>8 ms per lookup may not sound like much, but it&rsquo;s actually not a very good time
+at all. Excellent! We like this in a naive solution that we want to beat :&ndash;)</p>
+
+<h2>Introducing crit-bit trees</h2>
+
+<p>The data structure we want for this sort of thing is conventionally known as a
+radix-tree or trie. I think that&rsquo;s either pronounced like <strong>try</strong> or
+like <strong>tree</strong>, but either way it&rsquo;s really confusing. Also, it really helps
+to think of the data we are operating on as a string of bits, not characters.
+The specific type of trie that I decided to implement is from
+<a href="http://cr.yp.to/critbit.html">this paper</a> by the talented Mr.
+<a href="https://en.wikipedia.org/wiki/Daniel_J._Bernstein" title="Daniel J. Bernstein">djb</a>.</p>
+
+<p>The general idea of this approach is that we have a binary tree, and if some of
+our bit-strings have a common prefix x such that one string has a prefix of x0
+and the other x1, then the tree shall contain a node where all the strings
+beginning with x0 are found to the left of the node, and all strings starting
+with x1 are found to the right.</p>
+
+<p>What&rsquo;s neat is taht we don&rsquo;t need a node for every possible bit position either,
+but only for those where actual strings in or dataset diverge. To give an
+example, if we had only two strings 0001001 and 0100100, (these start to differ
+at the second bit), then we create an internal node in my tree that contains the
+bit-position, and two child pointers which point at external, or leaf, nodes
+that contain our two strings. To find a string in this, we follow a trail of
+internal nodes from the root, check the bit position in our needle string, and
+recurse down to the respective child node. Once we reach a leaf, we compare our
+needle to the string stored here, because it&rsquo;s possible that our needle and the
+stored string differ at other bits that we did not check on our way down.</p>
+
+<p>Apart from being a data structure for key lookups, an interesting property of
+tries is that all entries beginning with a particular substring are children of
+the same node. That makes this data structure the perfect candidate for our
+problem of prefix search. So, how fast is it? Actually, it&rsquo;s way too fast to
+measure with just 100 searches, but we can do simple divisions, so let&rsquo;s do a
+million lookups and prefix searches instead:</p>
+
+<pre><code>$ bin/benchmark -x 1m 1m 111111
+init: 0.62s
+find: 0.25s
+$ bin/benchmark -x 1m 1m 11111
+init: 0.66s
+find: 1.09s
+</code></pre>
+
+<p>250 nanoseconds per lookup, and a microsecond per prefix-search. That&rsquo;s a pretty
+neat improvement of four orders of magnitude! In my next post, I am going to
+talk a little bit about the actual implementation and interface. I have published
+my source code on <a href="https://github.com/badgerman/critbit">github</a>.</p>
+
+<h2>Some Thoughts</h2>
+
+<ul>
+<li>My dataset is pretty small. A million keys like this can probably fit into a
+modern CPU&rsquo;s L2 cache if they are small enough. But trust me, the numbers are
+only getting better when the dataset grows!</li>
+<li>Each internal node is really small: I need two pointers, a word to store the
+bit position (my implementation is excessive and uses size_t, plus a byte to
+store a bit mask. You could go a little smaller at the cost of performance
+and/or size limitations, but it&rsquo;s on the order of one or two dozen bytes. All
+internal nodes are the same size, so you would want to pair this with a clever
+memory allocator.</li>
+<li>Initialization is somewhat slower, because creating the tree is more
+complicated than just doing a couple of allocations. However, you could
+conceivably store the final tree in a compact format on disk once it&rsquo;s
+generated, and load it as a big chunk of memory, where you replace a pointer
+to an internal node with an integer index into your array of internal nodes.</li>
+<li>The crit-bit tree also allows fast deletion, which I haven&rsquo;t benchmarked,
+mostly because I have nothing to compare it to.</li>
+<li>All times are taken with clock() on a JoyentCloud VM. I have no idea what kind
+of CPU that translates to.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

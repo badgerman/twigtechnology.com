@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Raspi | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/raspi/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Blogging With a Raspberry Pi]]></title>
+    <link href="http://www.twigtechnology.com/blog/2014/02/10/blogging-with-a-raspberry-pi/"/>
+    <updated>2014-02-10T00:09:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2014/02/10/blogging-with-a-raspberry-pi</id>
+    <content type="html"><![CDATA[<p>I am running my blog software on a Raspberry Pi that is not directly facing the internet. I will argue why you should consider doing that, or a variation of it.</p>
+
+<p>It strikes me that modern blog software is monkeyballs. We are running a huge amount of poorly written code on a public-facing server, to generate dynamic pages that, in 99.9% of all cases, contain static content. This gives attackers a big surface area for attacks, and makes blogging a real threat to your infrastructure.</p>
+
+<!-- more -->
+
+
+<h2>The Status Quo</h2>
+
+<p>Most bloggers today probably don&rsquo;t realize this, but Wordpress used to be a software that you installed on your own rented server, and that was standard procedure. As a result of the many security breaches in Wordpress and PHP, the developer&rsquo;s poor handling of them, and the fact that for Joe Average, keeping up with fixes and ahead of attackers is nigh-impossible, Wordpress and Blogger have a thriving business in hosted blogs. Any blog that lives on blogger.com or wordpress.com is now hosted by the authors of that software as a service, and there is a giant organization making sure it does not fall over. You are trading this convenience for control. It&rsquo;s possible, though kind of tricky to choose an arbitrary URL for your blog, and just forget about writing your own extensions. Also, all of your data is in the cloud, and you are paying money for this monstrosity.</p>
+
+<h2>Some assembly required</h2>
+
+<p>My solution is built from a few off-the-shelf parts, but there is no hosted solution that I&rsquo;m aware of, so Mom and Dad might need help with setting this up.</p>
+
+<h3>Octopress</h3>
+
+<p><a href="http://octopress.org/">Octopress</a> is a blog software that generates a set of static pages from <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a>. The code that powers it is the same that powers parts of github, and markdown is a wonderful format to write your posts in. You do not get fine-grained control over the HTML that is generated, but face it, most people don&rsquo;t have any kind of control over how their Wordpress blog is formatted, either. I mean, just look at how many of them cannot size images to fit their prefab theme.</p>
+
+<h3>Linux</h3>
+
+<p>I suppose this is optional. Octopress is written in Ruby, and setting it up is very easy on Linux. I wouldn&rsquo;t know about other operating systems, but imagine that Mac users will have a comparatively easy time.</p>
+
+<h3>Raspberry Pi</h3>
+
+<p>Not everyone has a Linux computer, and while you could use a VM, I simply have <a href="https://twitter.com/ennor/status/430966136428331008">so many computers</a> which I could potentially be blogging from, that it is easier to have one that is always on. The Raspberry Pi makes a wonderful low-power server, and I&rsquo;ve set up SSH access so I can rebuild the blog on the command line.</p>
+
+<h3>Web space</h3>
+
+<p>I am currently not running my own web server. Commercial entities are doing a much better job at this, for an unbeatable price, and way fewer headaches. I am paying <a href="http://www.netbeat.de/">Netbeat</a> a few dollars a year to give me a large number of 9&rsquo;s in uptime and a few MB of space for static HTML pages. At the entry-level pricing they do not offer MySQL and all the other features that a Wordpress installation would require, so my solution has that going for it, too.</p>
+
+<h2>How it&rsquo;s done.</h2>
+
+<p>The following steps get you to the same system that I use. You may want to adjust some of the steps to suit your own environment.</p>
+
+<ol>
+<li>Install Raspbian on the Raspberry Pi. This Debian-based ARM distro deserves a different blog post, but if you have a Raspberry Pi, that&rsquo;s probably the OS you are already running.</li>
+<li>Install Octopress. The <a href="http://octopress.org/docs/setup/">setup guide</a> is surprisingly short and easy to follow.</li>
+<li>Change the folder layout. We want to store our blog post sources in github, but we don&rsquo;t want to store octopress in there, to keep it easy to upgrade. I&rsquo;ll explain my layout below.</li>
+<li>Create a github repository from the sources.</li>
+<li>Install weex, and configure it.</li>
+<li>Create a deployment rule to use weex.</li>
+<li>Check out the github repository on my PC.</li>
+<li>Install <a href="http://www.markdownpad.com/">MarkDownPad</a> and start writing articles.</li>
+<li>Commit finished articles to github.</li>
+<li>On the Raspberry Pi: pull, generate and deploy.</li>
+</ol>
+
+
+<h3>Folder layout</h3>
+
+<p>My tree is structured like this:</p>
+
+<pre><code>~enno
+- octopress        # octopress clone
+- blog             # contains _config.yml
+  - source         # my github clone
+    - _posts       # articles go here
+</code></pre>
+
+<p>How we get here:
+1. After cloning and installing octopress, move the source folder that it generated into your github repository. Move _config.yml also, since it contains your blog title and other important metadata. Commit and push the result to github (the blog folder is the root of your repository).
+2. In the octopress directory, create soft-links to the moved files: <code>ln -s ../blog/_config.yml ../blog/source .</code>
+3. To rebuild the blog, you&rsquo;ll still change into the octopress folder, and call <code>rake generate</code>.</p>
+
+<h3>Deploying with weex</h3>
+
+<p>Octopress will try to deploy your blog with ssh, but even though it is 2014, my web host only offers ftp. I cannot in good confidence recommend their service, but I&rsquo;m stuck with them and I can work around this problem for now.</p>
+
+<p>Weex is a small command-line tool that will synchronize a local directory with a remote. It is part of Debian, so isntall it with <code>apt-get install weex</code>. This is my ~/.weexrc file:</p>
+
+<pre><code>$ cat ~/.weexrc
+[default]
+AsciiFile = {
+*.html
+*.ssi
+*.txt
+*.shtml
+*.php
+*.js
+*.py
+}
+
+IgnoreLocalFile = {
+*~
+}
+
+[blog]
+DestDir = /
+SrcDir = /home/enno/octopress/public
+Password = correcthorsebatterystaple
+HostName = ftp.twigtechnology.com
+LoginName = enno
+</code></pre>
+
+<p>When you&rsquo;ve gotten this far, you can manually run <code>weex blog</code> and the blog will be deployed. Weex is clever about not uploading files that already exist, but not as clever as rsync would be. Alas, that would again require ssh, so here we are.</p>
+
+<h3>Making rake deploy work</h3>
+
+<p>The canonical way to deploy your blog with octopress is to call rake deploy in the octopress directory. This is achieved by modifying the Rakefile directly, and I&rsquo;ve put the required patch in <a href="https://gist.github.com/badgerman/8912543">a gist</a>.</p>
+
+<p>Now I can run <code>rake deploy</code> from the octopress folder and that will mirror the generated blog to the web server.</p>
+]]></content>
+  </entry>
+  
+</feed>

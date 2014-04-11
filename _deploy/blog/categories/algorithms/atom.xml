@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Algorithms | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/algorithms/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Prefix Search, Part 3: More Fun With Tries]]></title>
+    <link href="http://www.twigtechnology.com/blog/2012/05/28/prefix-search/"/>
+    <updated>2012-05-28T16:49:49+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2012/05/28/prefix-search</id>
+    <content type="html"><![CDATA[<p>In my last post, I demonstrated that crit-bit trees are really fast. This time,
+I want to talk a little bit about my specific implementation of these tries, and
+some interesting applications you can use them for.</p>
+
+<!-- more -->
+
+
+<p>I also want to acknowledge some of the prior art that I looked at before
+deciding to roll my own implementation. Professor Bernstein himself has written
+an implementation himself for his portable qhasm assembler. But since it&rsquo;s part
+of a larger software product, I didn&rsquo;t want to disentangle it. Adam Langley has
+an implementation on <a href="https://github.com/agl/critbit">his github</a> with
+some outstanding documentation that was very useful, but it only stores
+zero-terminated strings, not arbitrary data. While I didn&rsquo;t read his code too
+closely to keep my own implementation challenging, I did steal the clever
+bit-mask trick from it.</p>
+
+<h2>More Things To Do With Tries</h2>
+
+<p>While they are really good at string lookup, what crit-bit trees are best at is
+finding strings with a common prefix. I implemented two separate functions for
+this:
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span> <span class="nf">cb_find</span><span class="p">(</span><span class="n">critbit_tree</span> <span class="o">*</span> <span class="n">cb</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span> <span class="n">key</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">keylen</span><span class="p">);</span>
+</span><span class='line'><span class="kt">int</span> <span class="nf">cb_foreach</span><span class="p">(</span><span class="n">critbit_tree</span> <span class="o">*</span> <span class="n">cb</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span> <span class="n">key</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">keylen</span><span class="p">,</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">match_cb</span><span class="p">)(</span><span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span><span class="p">),</span> <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">);</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+The first function is straightforward, it looks for an exact match of the first
+<code>keylen</code> bytes of <code>key</code> in the given tree. The second function
+calls the <code>match_cb</code> callback on every match, which is a much easier
+pattern to implement than trying to return all matches. Where would you store
+them? Dynamic memory allocation is right out, of course. I compromised a bit by
+writing the <code>b_find_prefix</code> function, which takes a buffer supplied by
+the caller, but beare that paging through the results by calling it repeatedly
+is quadratic in complexity, so you shouldn&rsquo;t do that. It&rsquo;s really just a hack.</p>
+
+<h2>Use As A Fast Key-Value Store</h2>
+
+<p>One really nifty thing that I have been using this code for is as a fast
+key-value store. You could insert a couple of strings like &ldquo;config_value=42&rdquo; in
+the tree and look for the first match with the prefix &ldquo;config_value=&rdquo;. There are
+two wrapper macros in critbit.h to simplify this, and being able to store data
+other than zero-terminated strings means I am not limited to storing string
+values. Here&rsquo;s some example code that shows their use:
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span><span class='line'><span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">20</span><span class="p">];</span>
+</span><span class='line'><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">key</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">herpderp</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;;</span>
+</span><span class='line'><span class="kt">void</span> <span class="o">*</span> <span class="n">match</span><span class="p">;</span>
+</span><span class='line'><span class="kt">size_t</span> <span class="n">len</span><span class="p">;</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">len</span> <span class="o">=</span> <span class="n">cb_new_kv</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">i</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">),</span> <span class="n">buffer</span><span class="p">);</span>
+</span><span class='line'><span class="n">cb_insert</span><span class="p">(</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">cb</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">len</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="n">cb_find_prefix</span><span class="p">(</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">cb</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">match</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">cb_get_kv</span><span class="p">(</span><span class="n">match</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">i</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+What these macros essentially do is this:</p>
+
+<ol>
+<li><code>cb_new_kv</code> creates a (key,0,value) string inside buffer.</li>
+<li>Once you insert it, you can search for it by prefix-search for the key plus its zero-terminator.</li>
+<li>Finally, use <code>cb_get_kv</code> to extract the value from the first match.</li>
+</ol>
+
+
+<h2>Testing</h2>
+
+<p>I approached this project with a test-first attitude, writing tests before
+writing the actual implementation, and fixing bugs until the tests passed. I
+wrote almost as many lines of tests for this as I wrote actual code, and it
+still wasn&rsquo;t enough &ndash; one or two small issues slipped through. Lots of pointers
+and memory-pokery is always tricky, and I think this is one of those cases where
+it should be undisputed that unit tests are just incredibly useful.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Prefix Search, Part 2: Crit-bit Trees]]></title>
+    <link href="http://www.twigtechnology.com/blog/2012/05/26/prefix-search/"/>
+    <updated>2012-05-26T10:35:33+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2012/05/26/prefix-search</id>
+    <content type="html"><![CDATA[<p>The problem with the prefix search problem I described in my previous post is
+that there is most likely no good data structure in your language to do this
+with. There certainly isn&rsquo;t one in C. But the good news is that we get to build
+our own! How often do we still get to write data structures from scratch in this
+day and age? And when is it ever a good idea?</p>
+
+<!-- more -->
+
+
+<p>Of course, you should always try to go with the simplest thing that works: In my
+case, that&rsquo;s building an array of your million strings, and to search for a
+prefix, just strncmp each entry. We&rsquo;ll benchmark that, see how well it performs,
+and use it as our baseline for a good implementation.</p>
+
+<p>Have a look at the <a href="https://github.com/badgerman/critbit/blob/master/naive.c">naive
+implementation</a> that I
+wrote. Finding a needle in a haystack of a million strings takes almost no time
+at all, but building the array takes a while, so I&rsquo;ll just do 1000 searches,
+each for a single needle, in a set of a million strings, followed by 1000
+searches for a prefix that occurs exactly 11 times:</p>
+
+<pre><code>$ bin/naive -x 100 1m 111111
+init: 0.30s
+find: 0.82s
+$ bin/naive -x 1000 1m 111111
+init: 0.26s
+find: 7.51s
+</code></pre>
+
+<p>8 ms per lookup may not sound like much, but it&rsquo;s actually not a very good time
+at all. Excellent! We like this in a naive solution that we want to beat :&ndash;)</p>
+
+<h2>Introducing crit-bit trees</h2>
+
+<p>The data structure we want for this sort of thing is conventionally known as a
+radix-tree or trie. I think that&rsquo;s either pronounced like <strong>try</strong> or
+like <strong>tree</strong>, but either way it&rsquo;s really confusing. Also, it really helps
+to think of the data we are operating on as a string of bits, not characters.
+The specific type of trie that I decided to implement is from
+<a href="http://cr.yp.to/critbit.html">this paper</a> by the talented Mr.
+<a href="https://en.wikipedia.org/wiki/Daniel_J._Bernstein" title="Daniel J. Bernstein">djb</a>.</p>
+
+<p>The general idea of this approach is that we have a binary tree, and if some of
+our bit-strings have a common prefix x such that one string has a prefix of x0
+and the other x1, then the tree shall contain a node where all the strings
+beginning with x0 are found to the left of the node, and all strings starting
+with x1 are found to the right.</p>
+
+<p>What&rsquo;s neat is taht we don&rsquo;t need a node for every possible bit position either,
+but only for those where actual strings in or dataset diverge. To give an
+example, if we had only two strings 0001001 and 0100100, (these start to differ
+at the second bit), then we create an internal node in my tree that contains the
+bit-position, and two child pointers which point at external, or leaf, nodes
+that contain our two strings. To find a string in this, we follow a trail of
+internal nodes from the root, check the bit position in our needle string, and
+recurse down to the respective child node. Once we reach a leaf, we compare our
+needle to the string stored here, because it&rsquo;s possible that our needle and the
+stored string differ at other bits that we did not check on our way down.</p>
+
+<p>Apart from being a data structure for key lookups, an interesting property of
+tries is that all entries beginning with a particular substring are children of
+the same node. That makes this data structure the perfect candidate for our
+problem of prefix search. So, how fast is it? Actually, it&rsquo;s way too fast to
+measure with just 100 searches, but we can do simple divisions, so let&rsquo;s do a
+million lookups and prefix searches instead:</p>
+
+<pre><code>$ bin/benchmark -x 1m 1m 111111
+init: 0.62s
+find: 0.25s
+$ bin/benchmark -x 1m 1m 11111
+init: 0.66s
+find: 1.09s
+</code></pre>
+
+<p>250 nanoseconds per lookup, and a microsecond per prefix-search. That&rsquo;s a pretty
+neat improvement of four orders of magnitude! In my next post, I am going to
+talk a little bit about the actual implementation and interface. I have published
+my source code on <a href="https://github.com/badgerman/critbit">github</a>.</p>
+
+<h2>Some Thoughts</h2>
+
+<ul>
+<li>My dataset is pretty small. A million keys like this can probably fit into a
+modern CPU&rsquo;s L2 cache if they are small enough. But trust me, the numbers are
+only getting better when the dataset grows!</li>
+<li>Each internal node is really small: I need two pointers, a word to store the
+bit position (my implementation is excessive and uses size_t, plus a byte to
+store a bit mask. You could go a little smaller at the cost of performance
+and/or size limitations, but it&rsquo;s on the order of one or two dozen bytes. All
+internal nodes are the same size, so you would want to pair this with a clever
+memory allocator.</li>
+<li>Initialization is somewhat slower, because creating the tree is more
+complicated than just doing a couple of allocations. However, you could
+conceivably store the final tree in a compact format on disk once it&rsquo;s
+generated, and load it as a big chunk of memory, where you replace a pointer
+to an internal node with an integer index into your array of internal nodes.</li>
+<li>The crit-bit tree also allows fast deletion, which I haven&rsquo;t benchmarked,
+mostly because I have nothing to compare it to.</li>
+<li>All times are taken with clock() on a JoyentCloud VM. I have no idea what kind
+of CPU that translates to.</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Prefix Search, Part 1: A Challenge!]]></title>
+    <link href="http://www.twigtechnology.com/blog/2012/05/24/prefix-search/"/>
+    <updated>2012-05-24T20:35:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2012/05/24/prefix-search</id>
+    <content type="html"><![CDATA[<p>Algorithms and data structures are fun. The other week, I had the chance to
+implement something I needed for a project: Given a large set of strings, find
+all the ones that begin with a given prefix. For example, say you have a phone
+book, and you want to find all the people whose name starts with Joe. Or a large
+list of IP addresses, and you want to find all the ones that start with 192.168.</p>
+
+<!-- more -->
+
+
+<p>This is a fun problem, because I don&rsquo;t think any popular programming languages
+have good data structures to do this. Let me know if I&rsquo;m wrong, but I can&rsquo;t
+think of a naive way to implement this in Javascript or with the STL in C++.</p>
+
+<p>I wrote my own solution in C, based on a paper by D. J. Bernstein. It is super
+fast, and has some neat additional properties that I want to write about, but
+I&rsquo;ll save that for one of my next posts (have to get this post count up). I&rsquo;m
+putting the resulting code on github for the world, but I&rsquo;ll give you a chance
+to think about the problem before I spoil it ;&ndash;)</p>
+
+<p>If you are tempted to write your own solution, here&rsquo;s a clever little benchmark
+I came up with: Insert all the numbers from 0 to 999,999 into your data
+structure (as strings), then find all the ones where the first character is a
+&lsquo;1&rsquo;. You should get exactly 111,111 matches, and the entire process should
+probably take less than a second.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Code Kata: Unrolled Linked List in C]]></title>
+    <link href="http://www.twigtechnology.com/blog/2011/04/24/code-kata-unrolled-linked-list-in-c/"/>
+    <updated>2011-04-24T08:00:06+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2011/04/24/code-kata-unrolled-linked-list-in-c</id>
+    <content type="html"><![CDATA[<p>The other day I needed a linked list for the umpteenth time, and
+instead of going with the old (data, next) pairs, I decided I wanted
+something a bit more efficient, like an [unrolled
+linked list][<a href="http://en.wikipedia.org/wiki/Unrolled_linked_list">http://en.wikipedia.org/wiki/Unrolled_linked_list</a>
+&ldquo;Wikipedia&rdquo;). This also provided a good opportunity to use the
+CuTest unit testing framework and do some test-first
+development.</p>
+
+<!-- more -->
+
+
+<p>The result is rather nice, testing actually found a small bug,
+despite the fact that I was sure can do linked lists in my sleep, and
+I was so pleased with the performance characteristics (better cache
+efficiency and far fewer allocations) that I replaced all the lists in
+Eressea with it.</p>
+
+<h2>Code Sample</h2>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="n">quicklist</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">q</span><span class="p">,</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">ql</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+</span><span class='line'><span class="c1">// insert element at index:</span>
+</span><span class='line'><span class="n">ql_insert</span><span class="p">(</span><span class="n">ql</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">foo</span><span class="p">);</span>
+</span><span class='line'><span class="n">ql_insert</span><span class="p">(</span><span class="n">ql</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">bar</span><span class="p">);</span>
+</span><span class='line'><span class="n">assert</span><span class="p">(</span><span class="n">ql_get</span><span class="p">(</span><span class="n">ql</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="n">foo</span><span class="p">);</span>
+</span><span class='line'><span class="n">assert</span><span class="p">(</span><span class="n">ql_length</span><span class="p">(</span><span class="n">ql</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// push element at end, get indexed element:</span>
+</span><span class='line'><span class="n">ql_push</span><span class="p">(</span><span class="n">ql</span><span class="p">,</span> <span class="n">baz</span><span class="p">);</span>
+</span><span class='line'><span class="n">assert</span><span class="p">(</span><span class="n">ql_get</span><span class="p">(</span><span class="n">ql</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">==</span><span class="n">baz</span><span class="p">);</span>
+</span><span class='line'><span class="c1">// iterate over list:</span>
+</span><span class='line'><span class="k">for</span> <span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="n">ql</span><span class="p">,</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">q</span><span class="p">;</span><span class="n">ql_advance</span><span class="p">(</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">ql</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%p &quot;</span><span class="p">,</span> <span class="n">ql_get</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">i</span><span class="p">));</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+The code is on <a href="https://github.com/badgerman/quicklist">github</a> for you to
+use as you please.</p>
+]]></content>
+  </entry>
+  
+</feed>

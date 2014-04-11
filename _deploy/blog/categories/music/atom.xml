@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Music | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/music/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Solved: File Marked as Permanent Failure on Server]]></title>
+    <link href="http://www.twigtechnology.com/blog/2012/05/31/solved-file-marked-as-permanent/"/>
+    <updated>2012-05-31T19:28:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2012/05/31/solved-file-marked-as-permanent</id>
+    <content type="html"><![CDATA[<p>Google Music has this annoying problem where it will sometimes barf on your MP3
+files with the error message you see above. And it won&rsquo;t tell you what&rsquo;s wrong,
+either. The internet doesn&rsquo;t know, either.</p>
+
+<!-- more -->
+
+
+<p>So I set out to take those unprocessed files and apply any change to them I
+could think of, until one of them made the upload work. And the answer is
+(drumroll): Bad VBR headers. I suspect these are created by bad MP3 encoders, in
+my case by LAME3.99r.</p>
+
+<p>To fix this, you can install Foobar2000 (still the best multi-format Swiss army
+knife of a music player), and perform &ldquo;right click on the file &ndash;> Utilities &ndash;>
+Fix VBR MP3 header&rdquo;. After you rewrite the file, Music Manager will detect that
+it has changed, find it to be no longer broken, and upload it.</p>
+
+<p>You&rsquo;ll want to open up <code>%LOCALAPPDATA%\Google\MusicManager\FailureReport.txt</code> and
+scan this for all the files that MusicManager complained about, then fix the MBR
+headers on those.</p>
+]]></content>
+  </entry>
+  
+</feed>

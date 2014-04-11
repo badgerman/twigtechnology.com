@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Hacking | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/hacking/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[The Hero Core Save File Has an Attitude]]></title>
+    <link href="http://www.twigtechnology.com/blog/2010/05/09/the-herocore-save-file/"/>
+    <updated>2010-05-09T03:13:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2010/05/09/the-herocore-save-file</id>
+    <content type="html"><![CDATA[<p>Just looking at the <a href="http://www.remar.se/daniel/herocore.php">Hero Core</a> save
+file, not planning to do anything illegal, officer. This game is awesome, by the
+way.</p>
+
+<p><img class="<a" src="href="http://www.tumblr.com/photo/1280/ennorehling/582914148/1/tumblr_l24u9wuvHl1qztn9r">http://www.tumblr.com/photo/1280/ennorehling/582914148/1/tumblr_l24u9wuvHl1qztn9r</a>" title="&lsquo;Herocryption 1.4&rsquo; &lsquo;Screenshot&rsquo;" ></p>
+]]></content>
+  </entry>
+  
+</feed>

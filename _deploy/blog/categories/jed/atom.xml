@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Jed | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/jed/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[My .jedrc Configuration]]></title>
+    <link href="http://www.twigtechnology.com/blog/2014/04/10/my-jedrc/"/>
+    <updated>2014-04-10T23:31:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2014/04/10/my-jedrc</id>
+    <content type="html"><![CDATA[<p>In the war between emacs and vim, I lean towards emacs, but what I
+actually use is <a href="http://www.jedsoft.org/jed/">jed</a>. It&rsquo;s a fairly
+minimal editor, great for use in a remote terminal, with syntax
+highlighting, smart indenting, and just enough features to be decent
+for programming in. After years of fighting with the defaults, I have
+finally figured out the configuration I like. Like all my other
+configuration files, my .jedrc is stored
+<a href="https://github.com/badgerman/dotfiles/blob/master/.jedrc">on github</a>.</p>
+
+<!-- more -->
+
+
+<h2>Some sensible defaults for programming</h2>
+
+<p>I prefer indentation with 4 spaces, not tabs, and do not want my
+braces to be on separate lines (1TBS):</p>
+
+<pre><code>USE_TABS = 0;
+TAB_DEFAULT = 4;
+C_INDENT = 4;
+C_BRA_NEWLINE = 1;
+C_BRACE = 0;
+C_Colon_Offset = 0;
+</code></pre>
+
+<p>In text mode (especially when writing Makefiles), I prefer that the
+Tab key inserts a tab character instead of indenting the current line
+(the default). I also like those tab stops to be spaced 8 columns wide:</p>
+
+<pre><code>define text_mode_hook()
+{
+    local_setkey("self_insert_cmd", "\t");
+    TAB = 8;
+}
+</code></pre>
+
+<h2>Custom Hotkeys</h2>
+
+<p>I prefer Home and End to Ctrl+A and Ctrl+E:</p>
+
+<pre><code>setkey("bol", "\e[1~");
+setkey("eol", "\e[4~");
+</code></pre>
+
+<p>I like to navigate with Ctrl+Cursor. Up and Down skip an entire paragraph:</p>
+
+<pre><code>setkey("backward_paragraph", "\e[A");
+setkey("forward_paragraph",  "\e[B");
+</code></pre>
+
+<p>Getting Ctrl+Left and Ctrl+Right to skip forward and back a word
+needed a little more work, because <code>skip_word</code> and <code>bskip_word</code> behave
+poorly at the beginning and end of lines. I stole a lot of this from
+ide.sl:</p>
+
+<pre><code>setkey("ide_skip_word",      "\e[C");
+setkey("ide_bskip_word",     "\e[D");
+custom_variable ("Ide_Skippable_Chars",
+    "\n\t !\"#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^{|}~");
+define ide_bskip_word()
+{
+    bskip_chars (Ide_Skippable_Chars);
+    bskip_chars ("^" + Ide_Skippable_Chars);
+}
+
+define ide_skip_word()
+{
+    variable p = _get_point();
+    skip_chars("^" + Ide_Skippable_Chars);
+    if (_get_point() == p) {
+        skip_chars(Ide_Skippable_Chars);
+        skip_chars("^" + Ide_Skippable_Chars);
+    }
+}
+</code></pre>
+
+<p>Those two custom functions do the right thing. To be perfectly honest,
+I would prefer Alt+Cursor, but I cannot figure out what the code for
+those is. I got these codes from typing ^hk followed by the desired
+key, but that doesn&rsquo;t seem to work for the combinations I really want.
+I guess I&rsquo;ll get used to this eventually.</p>
+]]></content>
+  </entry>
+  
+</feed>

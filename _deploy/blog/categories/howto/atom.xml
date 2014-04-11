@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Howto | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/howto/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[My .jedrc Configuration]]></title>
+    <link href="http://www.twigtechnology.com/blog/2014/04/10/my-jedrc/"/>
+    <updated>2014-04-10T23:31:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2014/04/10/my-jedrc</id>
+    <content type="html"><![CDATA[<p>In the war between emacs and vim, I lean towards emacs, but what I
+actually use is <a href="http://www.jedsoft.org/jed/">jed</a>. It&rsquo;s a fairly
+minimal editor, great for use in a remote terminal, with syntax
+highlighting, smart indenting, and just enough features to be decent
+for programming in. After years of fighting with the defaults, I have
+finally figured out the configuration I like. Like all my other
+configuration files, my .jedrc is stored
+<a href="https://github.com/badgerman/dotfiles/blob/master/.jedrc">on github</a>.</p>
+
+<!-- more -->
+
+
+<h2>Some sensible defaults for programming</h2>
+
+<p>I prefer indentation with 4 spaces, not tabs, and do not want my
+braces to be on separate lines (1TBS):</p>
+
+<pre><code>USE_TABS = 0;
+TAB_DEFAULT = 4;
+C_INDENT = 4;
+C_BRA_NEWLINE = 1;
+C_BRACE = 0;
+C_Colon_Offset = 0;
+</code></pre>
+
+<p>In text mode (especially when writing Makefiles), I prefer that the
+Tab key inserts a tab character instead of indenting the current line
+(the default). I also like those tab stops to be spaced 8 columns wide:</p>
+
+<pre><code>define text_mode_hook()
+{
+    local_setkey("self_insert_cmd", "\t");
+    TAB = 8;
+}
+</code></pre>
+
+<h2>Custom Hotkeys</h2>
+
+<p>I prefer Home and End to Ctrl+A and Ctrl+E:</p>
+
+<pre><code>setkey("bol", "\e[1~");
+setkey("eol", "\e[4~");
+</code></pre>
+
+<p>I like to navigate with Ctrl+Cursor. Up and Down skip an entire paragraph:</p>
+
+<pre><code>setkey("backward_paragraph", "\e[A");
+setkey("forward_paragraph",  "\e[B");
+</code></pre>
+
+<p>Getting Ctrl+Left and Ctrl+Right to skip forward and back a word
+needed a little more work, because <code>skip_word</code> and <code>bskip_word</code> behave
+poorly at the beginning and end of lines. I stole a lot of this from
+ide.sl:</p>
+
+<pre><code>setkey("ide_skip_word",      "\e[C");
+setkey("ide_bskip_word",     "\e[D");
+custom_variable ("Ide_Skippable_Chars",
+    "\n\t !\"#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^{|}~");
+define ide_bskip_word()
+{
+    bskip_chars (Ide_Skippable_Chars);
+    bskip_chars ("^" + Ide_Skippable_Chars);
+}
+
+define ide_skip_word()
+{
+    variable p = _get_point();
+    skip_chars("^" + Ide_Skippable_Chars);
+    if (_get_point() == p) {
+        skip_chars(Ide_Skippable_Chars);
+        skip_chars("^" + Ide_Skippable_Chars);
+    }
+}
+</code></pre>
+
+<p>Those two custom functions do the right thing. To be perfectly honest,
+I would prefer Alt+Cursor, but I cannot figure out what the code for
+those is. I got these codes from typing ^hk followed by the desired
+key, but that doesn&rsquo;t seem to work for the combinations I really want.
+I guess I&rsquo;ll get used to this eventually.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Configuring Thunderbird and Other MUAs for Gmail]]></title>
+    <link href="http://www.twigtechnology.com/blog/2014/02/11/using-thunderbird-with-gmail/"/>
+    <updated>2014-02-11T00:09:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2014/02/11/using-thunderbird-with-gmail</id>
+    <content type="html"><![CDATA[<p>Following up on my previous post, I&rsquo;m going to put what I learned to use and configure my mail software to use Gmail in a way that deals with the inherent folder/label confusion.</p>
+
+<!-- more -->
+
+
+<h2>Thunderbird</h2>
+
+<p>When you create a new account with a gmail.com address, Thunderbird will automatically guess the correct IMAP/SMTP servers and settings for you, but you still want to tweak that initial setup.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Understanding Gmail's IMAP Server]]></title>
+    <link href="http://www.twigtechnology.com/blog/2014/02/10/understanding-gmail-imap/"/>
+    <updated>2014-02-10T09:00:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2014/02/10/understanding-gmail-imap</id>
+    <content type="html"><![CDATA[<p>I recently abandoned the Gmail web interface in favor of good old mail user agents (MUA) like Thunderbird, K-9 Mail and mutt. This has been a wonderful experience all around, but there were a few settings I had to make that were not intuitive until I understood how Gmail operates. Namely, how it treats IMAP folders.</p>
+
+<!-- more -->
+
+
+<h2>Folders vs. Labels</h2>
+
+<p>At some point during its lifetime, Gmail introduced the concept of labels for conversations. Labeling a conversation would make it show up in a separate inbox on the left-hand side of the web UI, and it&rsquo;s easy to believe that these labels map to the IMAP concept of folders. This is compounded by the fact that Gmail&rsquo;s IMAP Server presents labels in this way, and lets you subscribe/unsubscribe from them through the IMAP folder mechanism.</p>
+
+<p>However, labels are not folders. In IMAP, a message lived in only one folder at a time, and it is either in the Inbox, the Sent Mail folder or your recipe collection, but never in all of them. Gmail groups messages in conversations, and a message is found in all folders that correspond to the labels on any of its messages. Meaning if you sent an email to Mom about her cobbler recipe, and labeled her response with your Recipes label, or maybe even starred it, too, then both messages are now in the following folders of the Web UI:</p>
+
+<ol>
+<li>Inbox (because you received an email from Mom)</li>
+<li>Sent Mail (because you sent at least one message in this conversation)</li>
+<li>All Mail (Any and all messages go here)</li>
+<li>Recipes (the label you chose)</li>
+<li>Starred</li>
+</ol>
+
+
+<p>This is key to understanding why Gmail seems to be acting strange when used from another MUA.</p>
+
+<ul>
+<li>Send a message, and Gmail will automatically label it to appear in the <strong>Sent Mail</strong> folder. Instructing Thunderbird to keep copies of sent mails on the server will create duplicates.</li>
+<li>To delete a conversation from a folder means to remove that label from it. The message is not physically deleted, and always remains in the <strong>All Mail</strong> folder.</li>
+<li>Gmail&rsquo;s Archive command simply removes the <strong>INBOX</strong> label from the conversation. On a normal server, it would move the archived message from the inbox to a folder named Archives, and Thunderbird et al are built around that idea of archiving. If you specify an IMAP Archive folder in Thunderbird, that will simply add another Gmail label.</li>
+<li>If you let Thunderbird copy anything to the <strong>All Mail</strong> folder, it may create another copy of the conversation?</li>
+<li>Since <strong>All Mail</strong> is not a folder, but just a label that every conversation automatically carries, it is absolutely the worst choice for an Archive location (although I&rsquo;ve seen setup guides recommend it).</li>
+</ul>
+
+
+<h2>Gmail&rsquo;s not Email</h2>
+
+<p>I&rsquo;ve used Thunderbird in my examples because it is the most widely used desktop MUA, but these findings are true for every other mail program out there that implements the IMAP protocol. The problem is not with them, it&rsquo;s with Gmail implementing the protocol to describe something very different from what it was intended for.</p>
+
+<p>This reminds me of a time long past. There was a period in the 90&rsquo;s when we had two classes of email programs. The ones that followed standards (mutt, pine, elm, Thunderbird), and the ones that tried to implement Internet Mail on top of existing corporate mail systems (Outlook, Lotus Notes). Usually, the latter had bad abstractions that made them do things like send Word documents, HTML messages or unrecognizable headers. Interestingly, Outlook Express looks like Microsoft&rsquo;s attempt to write a pure Internet Mail software that was unencumbered by corporate mail infrastructure like Exchange server or Lotus Notes.</p>
+
+<p>The problem with all of these approaches is that they pretend to be something they are not, and they tried to jump onto a growth trend by subverting the standards. Remember how we all hated Microsoft for that? It looks as if Gmail is the Outlook of the 21st century, though. Piggy-backing on a standard that they only marginally support, just poorly enough to lure users in and then make them switch to their own implementation, which has its own restful API and is not handicapped by having to speak to the server in a language it only barely speaks, i.e. IMAP.</p>
+
+<p>It&rsquo;s not the first time we see Google doing this. They have used the RSS to prop up Reader and Currents, and their XMPP implementation has gone from decent (Google Talk) to legacy support (Hangouts) just this past year. Just like they are about to finally flip the switch on that, I would not be surprised if IMAP support for Gmail is going to disappear in the near future, too.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Blogging With a Raspberry Pi]]></title>
+    <link href="http://www.twigtechnology.com/blog/2014/02/10/blogging-with-a-raspberry-pi/"/>
+    <updated>2014-02-10T00:09:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2014/02/10/blogging-with-a-raspberry-pi</id>
+    <content type="html"><![CDATA[<p>I am running my blog software on a Raspberry Pi that is not directly facing the internet. I will argue why you should consider doing that, or a variation of it.</p>
+
+<p>It strikes me that modern blog software is monkeyballs. We are running a huge amount of poorly written code on a public-facing server, to generate dynamic pages that, in 99.9% of all cases, contain static content. This gives attackers a big surface area for attacks, and makes blogging a real threat to your infrastructure.</p>
+
+<!-- more -->
+
+
+<h2>The Status Quo</h2>
+
+<p>Most bloggers today probably don&rsquo;t realize this, but Wordpress used to be a software that you installed on your own rented server, and that was standard procedure. As a result of the many security breaches in Wordpress and PHP, the developer&rsquo;s poor handling of them, and the fact that for Joe Average, keeping up with fixes and ahead of attackers is nigh-impossible, Wordpress and Blogger have a thriving business in hosted blogs. Any blog that lives on blogger.com or wordpress.com is now hosted by the authors of that software as a service, and there is a giant organization making sure it does not fall over. You are trading this convenience for control. It&rsquo;s possible, though kind of tricky to choose an arbitrary URL for your blog, and just forget about writing your own extensions. Also, all of your data is in the cloud, and you are paying money for this monstrosity.</p>
+
+<h2>Some assembly required</h2>
+
+<p>My solution is built from a few off-the-shelf parts, but there is no hosted solution that I&rsquo;m aware of, so Mom and Dad might need help with setting this up.</p>
+
+<h3>Octopress</h3>
+
+<p><a href="http://octopress.org/">Octopress</a> is a blog software that generates a set of static pages from <a href="https://en.wikipedia.org/wiki/Markdown">Markdown</a>. The code that powers it is the same that powers parts of github, and markdown is a wonderful format to write your posts in. You do not get fine-grained control over the HTML that is generated, but face it, most people don&rsquo;t have any kind of control over how their Wordpress blog is formatted, either. I mean, just look at how many of them cannot size images to fit their prefab theme.</p>
+
+<h3>Linux</h3>
+
+<p>I suppose this is optional. Octopress is written in Ruby, and setting it up is very easy on Linux. I wouldn&rsquo;t know about other operating systems, but imagine that Mac users will have a comparatively easy time.</p>
+
+<h3>Raspberry Pi</h3>
+
+<p>Not everyone has a Linux computer, and while you could use a VM, I simply have <a href="https://twitter.com/ennor/status/430966136428331008">so many computers</a> which I could potentially be blogging from, that it is easier to have one that is always on. The Raspberry Pi makes a wonderful low-power server, and I&rsquo;ve set up SSH access so I can rebuild the blog on the command line.</p>
+
+<h3>Web space</h3>
+
+<p>I am currently not running my own web server. Commercial entities are doing a much better job at this, for an unbeatable price, and way fewer headaches. I am paying <a href="http://www.netbeat.de/">Netbeat</a> a few dollars a year to give me a large number of 9&rsquo;s in uptime and a few MB of space for static HTML pages. At the entry-level pricing they do not offer MySQL and all the other features that a Wordpress installation would require, so my solution has that going for it, too.</p>
+
+<h2>How it&rsquo;s done.</h2>
+
+<p>The following steps get you to the same system that I use. You may want to adjust some of the steps to suit your own environment.</p>
+
+<ol>
+<li>Install Raspbian on the Raspberry Pi. This Debian-based ARM distro deserves a different blog post, but if you have a Raspberry Pi, that&rsquo;s probably the OS you are already running.</li>
+<li>Install Octopress. The <a href="http://octopress.org/docs/setup/">setup guide</a> is surprisingly short and easy to follow.</li>
+<li>Change the folder layout. We want to store our blog post sources in github, but we don&rsquo;t want to store octopress in there, to keep it easy to upgrade. I&rsquo;ll explain my layout below.</li>
+<li>Create a github repository from the sources.</li>
+<li>Install weex, and configure it.</li>
+<li>Create a deployment rule to use weex.</li>
+<li>Check out the github repository on my PC.</li>
+<li>Install <a href="http://www.markdownpad.com/">MarkDownPad</a> and start writing articles.</li>
+<li>Commit finished articles to github.</li>
+<li>On the Raspberry Pi: pull, generate and deploy.</li>
+</ol>
+
+
+<h3>Folder layout</h3>
+
+<p>My tree is structured like this:</p>
+
+<pre><code>~enno
+- octopress        # octopress clone
+- blog             # contains _config.yml
+  - source         # my github clone
+    - _posts       # articles go here
+</code></pre>
+
+<p>How we get here:
+1. After cloning and installing octopress, move the source folder that it generated into your github repository. Move _config.yml also, since it contains your blog title and other important metadata. Commit and push the result to github (the blog folder is the root of your repository).
+2. In the octopress directory, create soft-links to the moved files: <code>ln -s ../blog/_config.yml ../blog/source .</code>
+3. To rebuild the blog, you&rsquo;ll still change into the octopress folder, and call <code>rake generate</code>.</p>
+
+<h3>Deploying with weex</h3>
+
+<p>Octopress will try to deploy your blog with ssh, but even though it is 2014, my web host only offers ftp. I cannot in good confidence recommend their service, but I&rsquo;m stuck with them and I can work around this problem for now.</p>
+
+<p>Weex is a small command-line tool that will synchronize a local directory with a remote. It is part of Debian, so isntall it with <code>apt-get install weex</code>. This is my ~/.weexrc file:</p>
+
+<pre><code>$ cat ~/.weexrc
+[default]
+AsciiFile = {
+*.html
+*.ssi
+*.txt
+*.shtml
+*.php
+*.js
+*.py
+}
+
+IgnoreLocalFile = {
+*~
+}
+
+[blog]
+DestDir = /
+SrcDir = /home/enno/octopress/public
+Password = correcthorsebatterystaple
+HostName = ftp.twigtechnology.com
+LoginName = enno
+</code></pre>
+
+<p>When you&rsquo;ve gotten this far, you can manually run <code>weex blog</code> and the blog will be deployed. Weex is clever about not uploading files that already exist, but not as clever as rsync would be. Alas, that would again require ssh, so here we are.</p>
+
+<h3>Making rake deploy work</h3>
+
+<p>The canonical way to deploy your blog with octopress is to call rake deploy in the octopress directory. This is achieved by modifying the Rakefile directly, and I&rsquo;ve put the required patch in <a href="https://gist.github.com/badgerman/8912543">a gist</a>.</p>
+
+<p>Now I can run <code>rake deploy</code> from the octopress folder and that will mirror the generated blog to the web server.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Personal Backup Strategies]]></title>
+    <link href="http://www.twigtechnology.com/blog/2014/02/07/personal-backup-strategies/"/>
+    <updated>2014-02-07T07:24:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2014/02/07/personal-backup-strategies</id>
+    <content type="html"><![CDATA[<p>Whenever I tell people that I still have all my email from 1992,
+and source code going back to 1989, they look at me like I am some
+sort of wizard. One of those old wizard, too, because the first thing
+I hear is usually &ldquo;I was three years old in 1989&rdquo;. I guess I&rsquo;ve just
+always been good at backups, even though I have never used a
+commercial backup software in my life. Or maybe because of that, and
+because my strategy is really simple and easy to follow. I figure I
+should explain my reasoning, and maybe it&rsquo;ll help somebody else.</p>
+
+<!-- more -->
+
+
+<h2>What is your backup threat scenario?</h2>
+
+<p>Backups give you peace of mind. Depending on your fears, a different
+solution might be best for you.</p>
+
+<p>Are you trying to prevent yourself from a virus, hardware failure, or
+from burglars? Then a commercial backup software is probably the
+easiest thing to set up, and cloud backup solutions like
+<a href="https://mozy.com/free?ref=KHLLU7" title="Easy Cloud Backup">Mozy</a> are very
+easy to use. Do you have a lot of data, or don&rsquo;t trust the cloud? Then
+you probably want an external disk to store everything on. Are you
+afraid that thieves might break into your house? Store that hard drive
+off-site, maybe at your office. Afraid the government may come after
+your data? Store the drive in a foreign country, preferably one that
+is not a NATO member.</p>
+
+<p>Me, I am protecting myself against an asteroid strike that wipes out
+North America, or an Earthquake that makes California slide into the
+sea, but YMMV.</p>
+
+<h2>How big is your personal data footprint?</h2>
+
+<p>When it comes to backup, there are basically two types of data:
+Personal files that are exclusively on my own computers, and widely
+available ones that I can recover from the internet or elsewhere.</p>
+
+<p>Your resume and tax documents are a good example that falls in the
+first category. Family pictures and video (see my note about Photos,
+below) are also hard to recover once they are gone, and for the
+average person, these make up the bulk of their personal data.</p>
+
+<p>Files that are easy to recover are Movies and Music you downloaded or
+ripped. Even if the earthquake swallows your CD collection along with
+the Justin Beiber MP3s you ripped from it, you will be able to buy
+that music again, if the Asteroid hasn&rsquo;t wiped out civilization, and
+if that happens, let&rsquo;s rebuild without letting the Beiber back into
+our lives, shall we? We&rsquo;ll have bigger problems.</p>
+
+<p>Source code that is stored on github is probably mirrored widely
+across the CDNs of this world, although it&rsquo;s in the cloud, so I am
+counting it towards the personal data category.</p>
+
+<p>Adding up everything in the personal data category, I clock in at less
+than 300 GiB. In this day and age of <a href="http://www.amazon.com/dp/B00E3W16OU/ref=twister_B00EHFJJHY">terrabyte SSD
+drives</a>,
+that is a surprisingly tiny number for 30 years of personal computing
+history.</p>
+
+<h2>Collect everything in one spot</h2>
+
+<p>The reason I never lost anything is that for the longest time, every
+time I bought a new disk, I would copy the old disk into a backup
+folder on the new one before I replaced it. Eventually, I ended up
+with a recursive tree of everything, with a lot of duplication. At
+some point, I had multiple computers, and that backup folder kept
+growing and growing. At some point, I sat down and cleaned it all up,
+removed all the duplicates. You can use
+<a href="http://www.tucows.com/preview/511502/Duplicate-File-Remover">software</a>
+to help you with this, and once the duplicates are gone, organize
+everything the way you would lay it out in your &ldquo;My Documents&rdquo; folder,
+and store it into a folder on your main PC or file server. I&rsquo;ve named
+mine &ldquo;The Vault&rdquo;, and it sits on a mirrored RAID array of 300 GiB
+spinning disks. A Windows SMB share lets all of my other computers
+read and write it when I need to get something from there.</p>
+
+<h2>Off-site Backup</h2>
+
+<p>Now that I have a single folder, my backup strategy is simple: Keep
+everything in there forever, and do frequent off-site backups of this
+one folder. I have a 300 GiB external drive, and I use Microsoft&rsquo;s
+<a href="https://en.wikipedia.org/wiki/SyncToy">SyncToy</a> software to mirror my
+data from the Vault to the external drive. Since most of my data
+doesn&rsquo;t change, this is a relatively quick process, and I can automate
+it, which protects me against a failure in the server. Every time I
+travel to Europe, I bring the drive with me and exchange it for an
+identical one that&rsquo;s in my parents' basement. This is my asteroid
+bunker, and it means that my worst-case loss will be a year&rsquo;s worth of
+recent data.</p>
+
+<h2>Updating the vault</h2>
+
+<p>I treat my Vault share the way one treats the stacks in a library: It
+contains everything, but things that are in frequent use have local
+copies on other machines, too. The quality of my backup depends on me
+frequently synchronizing these local copies back to the Vault. As long
+as I keep all my folders in the same hierarchy as they are in the
+Vault (remember when I said to lay it out like the My Documents
+folder?), I can again use SyncToy to mirror any local changes back to
+the authoritative copy in the Vault.</p>
+
+<h2>Potential improvements</h2>
+
+<ul>
+<li>I don&rsquo;t do the synchronization back to the Vault often enough now, because that machine is turned off most of the time. It&rsquo;s also not automated yet. If I didn&rsquo;t have strong reservations against the cloud, I could pair this with Mozy, which lets me configure it to only backup files that are less than a year old.</li>
+<li>I do not have an automated, scheduled synchronization to the external hard drive set up, because the Vault is offline most of the time.</li>
+<li>I could put the Vault on a <a href="http://www.synology.com/events/2013_us_photographer.php?lang=us">NAS</a>, and improve both of the points above, but so far I&rsquo;ve gotten away without paying any money and just using recycled hardware.</li>
+<li>Cloud Backup is mighty convenient. I&rsquo;m planning to set up a separate server at my parents' house and possible other locations, and have the Vault synchronized to it with <a href="http://www.bittorrent.com/sync">Bittorrent Sync</a>, which gives me all the benefits of the cloud along with full control over my own data.</li>
+</ul>
+
+
+<h3>A note about Photos</h3>
+
+<p>Putting all your pictures into the cloud, whether it&rsquo;s on Facebook or
+Flickr, is no backup strategy. Aside from the obvious dangers of
+putting anything into the cloud, Internet startups come and go on a
+daily basis, their privacy and copyright terms can be <a href="http://tosdr.org/" title="Terms of Service, Didn't Read">extremely
+questionable</a>, and
+they often make downloading difficult. Ask me about the 200 pictures
+limit on my Flickr account sometime, and the 7 clicks per photo to
+download the original size&hellip;</p>
+
+<p>I am not advocating against putting your pictures online. You make
+that call. But I am telling you that this is by no means a valid form
+of backup. Consider any photo lost that you do not have a personal
+copy of.</p>
+]]></content>
+  </entry>
+  
+</feed>

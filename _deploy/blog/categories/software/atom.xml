@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Software | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/software/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[E-Mail Encryption]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/12/24/email-encryption/"/>
+    <updated>2013-12-24T11:00:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/12/24/email-encryption</id>
+    <content type="html"><![CDATA[<p>Here is a depressing thought: public-key encryption was around when I was in
+college in the mid-90&rsquo;s, and it&rsquo;s still not widely adopted. Instead, it&rsquo;s
+considered &ldquo;too complicated for regular users&rdquo;, and none of the major vendors
+of email solutions has made an attempt to integrate encryption into their
+software.</p>
+
+<p>As long as the NSA and Google read every one of my emails, I want to have a way
+of preserving my privacy. I&rsquo;m writing these instructions in the hope that some
+of the people I communicate will find it easier to use encryption when
+communicating with me.</p>
+
+<!-- more -->
+
+
+<h2>Using GnuPG with Thunderbird</h2>
+
+<p>PGP, or &ldquo;Pretty Good Privacy&rdquo;, is a standard for email encryption developed in
+1991, and remains the de-facto standard until today. The most popular
+implementation of the PGP standard is the Gnu Privacy Guard (commonly
+abbreviated as GnuPG or GPG). On your computer, you will need to install a <a href="http://www.gnupg.org/">GnuPG download</a> that matches your operating system.</p>
+
+<p>To integrate GnuPG into Thunderbird, you will need to install the <a href="https://www.enigmail.net/">Enigmail extension</a>.</p>
+
+<h2>Using APG on Android</h2>
+
+<p>On Android, PGP is implemented in the <a href="https://play.google.com/store/apps/details?id=org.thialfihar.android.apg">APG App</a> that I mentioned in my previous posting.</p>
+
+<h2>Inline PGP vs. PGP/MIME</h2>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Gmail With K-9, and an Identity Change]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/12/23/using-gmail-with-k9/"/>
+    <updated>2013-12-23T20:30:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/12/23/using-gmail-with-k9</id>
+    <content type="html"><![CDATA[<p>In my previous article, I described how to set up Thunderbird for use with your
+Gmail account. That solves my annoyances with the Gmail web interface, and
+allows me to use PGP encryption in my emails, something I&rsquo;ll probably write a
+post about later. However, I also have a series Android devices on which I also
+read email, and the Gmail app on them has a few of the same problems, namely the
+lack of encryption. How much does the NSA pay the major vendors so they don&rsquo;t
+implement this, and make it harder on us?</p>
+
+<p>In this article, I&rsquo;ll show you how to set up the free K-9 Mail app, and add
+a new identity to it, so we can prepare our eventual exit from Gmail altogether.
+You may not choose to do that yet, but I did.</p>
+
+<!-- more -->
+
+
+<h2>Send in the K-9 team</h2>
+
+<p>Before you install K-9, you should <a href="https://play.google.com/store/apps/details?id=org.thialfihar.android.apg">install
+APG</a>.
+It provides PGP encryption for Android, and for reasons I&rsquo;ve never understood,
+K-9 insists that it be installed first if you want to use both of them together.
+For now, forget that you did that, I&rsquo;m going to deal with encryption in a later
+posting.</p>
+
+<p>After that, install the K-9 Mail application on our phone. Get it from
+<a href="https://play.google.com/store/apps/details?id=com.fsck.k9">Google&rsquo;s Store</a>, or
+Market, or whatever your phone calls it. These app are very undemanding, and
+I&rsquo;ve installed them on anything from an old Froyo phone to the latest KitKat
+tablet.</p>
+
+<p>After you&rsquo;ve installed K-9, you&rsquo;ll have to configure it to use your Gmail
+account. As with Thunderbird, you will need to create another
+<a href="https://support.google.com/accounts/answer/185833">application-specific
+password</a> for this if you are
+using two-factor authentication. You want to use a different one, so that if you
+ever lose your phone, you can just revoke the password that it used and cut off
+access to your email.</p>
+
+<p>From the menu, choose &ldquo;add account&rdquo;, enter your full email address and the
+password, and let the app find the incoming and outgoing server settings for
+you. Just like with Thunderbird, this should happen automatically, so no
+memorizing of host names or ports required. When all is done, you&rsquo;re prompted for
+a name for the account and your own name, and taken to the account view. By
+default, your account will be set up to not poll the inbox repeatedly, so you
+might want to change the folder poll frequency in the settings to something like
+every 15 minutes. Take a look around all the settings and consider what you want
+your phone to be doing.</p>
+
+<h2>New Identity</h2>
+
+<p>I&rsquo;m ultimately trying to get out of Gmail entirely, and I have a domain that&rsquo;s
+hosted at netbeat with a catch-all email account on their POP3 mail server. It
+would be cool if I could slowly migrate to an email address on that domain, but
+I don&rsquo;t have the patience to set up my own IMAP server for it yet.</p>
+
+<p>First step in this is to configure Gmail to fetch the emails from that domain.
+I&rsquo;ve been doing this for a while now, and even though it means Google gets even
+more data about me, it was worth it for their superior spam filtering.
+Instruction on how to set up Gmail&rsquo;s Mail Fetcher can be found in Google&rsquo;s
+support pages: <a href="https://support.google.com/mail/answer/21289">Centralize mail from different accounts with Mail
+Fetcher</a>.</p>
+
+<p>The one disadvantage of this setup is that email now takes longer to be
+delivered, because on top of K-9&rsquo;s polling frequency, each message now has to
+first go to my domain host&rsquo;s servers, and then gets picked up by Gmail on a
+regular schedule (up to an hour), so you should take that article&rsquo;s advice
+and set up direct forwarding, too. How you do that differs based on your domain
+host, so you&rsquo;re on your own there. When I did it, it caused my emails to arrive
+almost instantly.</p>
+
+<p>Secondly, you&rsquo;ll want to be able to send emails through Google&rsquo;s servers from
+your new email address. Again, this is documented in the Google support pages:
+<a href="https://support.google.com/mail/answer/22370">Sending mail from a different
+address</a></p>
+
+<p>Once this works, you should have a drop-down in Gmail&rsquo;s web interface that lets
+you choose which identity you want to send email from. By using your new
+identity, you are slowly training everyone you communicate with that you&rsquo;ve got
+a new address &ndash; the address will get collected into their address books. their
+replies will be sent to it, etc. You may also want to add a signature to your
+emails that explains your new address. Just make sure not to tell the spammers
+:&ndash;)</p>
+
+<p>Back to K-9: In the account settings, under &ldquo;Sending mail&rdquo;, select &ldquo;Manage
+Identities&rdquo;, and from the menu choose &ldquo;New Identity&rdquo; to add your alternate email
+address. Then long-press on the newly created identity and choose &ldquo;Move to top /
+make default&rdquo;. K-9 will use this identity for all new messages, but in replies,
+it will default to whatever address the email went to, and not switch. Don&rsquo;t
+worry if that&rsquo;s confusing, you can always change whatever identity it chooses
+from a drop-down at the top of the composition screen, for any message you
+write.</p>
+
+<p>Thunderbird has a similar mechanism for multiple identities, and you might want
+to set it up there, too. Rather than describe it here, I&rsquo;ll just link the
+<a href="http://kb.mozillazine.org/Mozilla_Suite_:_FAQs_:_Mail_Aliases">Mozilla Knowledge
+Base</a> and hope
+you&rsquo;ll figure it out for yourself.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using Gmail With Thunderbird]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/12/23/using-gmail-with-thunderbird/"/>
+    <updated>2013-12-23T14:00:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/12/23/using-gmail-with-thunderbird</id>
+    <content type="html"><![CDATA[<p>I have had it with Gmail. The web interface is becoming more and more
+antagonistic every day, and it is my firmly help belief that Gmail is not email.
+Back in the days, Gmail was a standards-compliant service built on IMAP and SMTP,
+with a fancy web interface. A web interface that eventually became so usable, it
+convinced me that I did not actually need a desktop email application any longer.
+Those days are over. The new Compose, the inability to use it with a PGP browser
+extension, the G+ integration, the hopeless top-posting and that new thing where
+every attachment gets stored into Drive are all making me harken back to a
+simpler time.</p>
+
+<!-- more -->
+
+
+<h2>Why stick with Gmail at all?</h2>
+
+<p>It is tempting to make a radical departure and just set up my own mail service
+on my own domain. And one day, that&rsquo;s what I intend to do, but not everyone can
+do that, and I believe in taking incremental steps in the right direction. So
+the first thing I&rsquo;m doing is getting rid of Gmail the web application, but I am
+keeping Gmail the IMAP/SMTP service. I have had this email address for the last
+10 years (I signed up November 11, 2004), and it&rsquo;s become impossible to just
+stop using it overnight.</p>
+
+<h2>Thunderbird is still the best.</h2>
+
+<p>Unlike Microsoft and Google, the Mozilla Foundation seems to truly believe in
+Internet standards and extensibility, and Thunderbird is still the best desktop
+email software. It also exists on every major platform, so if I ever decide to
+abandon Windows, it will still be wherever I go.</p>
+
+<p>There is at this time no Thunderbird for Android or iOS, and I doubt that this
+will happen anytime soon. However, other email software exists, and the Android
+Gmail app is not as awful as the web application, so the mental trauma is not
+quite as high.</p>
+
+<h2>Thunderbird Setup</h2>
+
+<p>Modern versions of Thunderbird (I am running 24.2) recognize a Gmail address in
+their account wizard and they will configure the correct IMAP and SMTP server
+for you, with the correct SSL/TLS settings. If you are using two-factor
+authentication (you should!), then this is one of the cases where you need to
+use an
+<a href="https://support.google.com/accounts/answer/185833">application-specific password</a> to access
+your Google account. Tell Thunderbird to remember it. You are encrypting your
+hard drive, right?</p>
+
+<p>Next, we need to do some configuration that Thunderbird doesn&rsquo;t get right, in
+order to work around some behavior of Gmail that isn&rsquo;t like other IMAP servers.
+Go to the newly created account settings, and configure the following sections:</p>
+
+<h3>Server Settings</h3>
+
+<p>Gmail calls its IMAP folders &ldquo;labels&rdquo;, and there are two kinds, the ones that
+you defined, and the canonical ones, like Drafts, Trash, Sent Mail, etc. These
+canonical folders all live under the <em>Gmail</em> folder of the IMAP folder
+hierarchy. In this next step, we want to prevent Thunderbird from creating its
+own copy of those canonical folders, and tell it to use the ones that Gmail
+provides.</p>
+
+<pre><code>When I delete a message: (*) Just mark it as deleted
+</code></pre>
+
+<p>The Gmail server automatically manages its internal Trash folder, and you don&rsquo;t
+need to explicitly move deleted messages there.</p>
+
+<h3>Copies &amp; Folders</h3>
+
+<pre><code>When sending messages, automatically [ ] Place a copy in:
+</code></pre>
+
+<p>Leave this unchecked. Gmail&rsquo;s servers will automatically place a copy of every
+outgoing message into the <em>Sent Mail</em> folder, and making another copy will just
+create duplicates, and it really messes up the witless Gmail web interface.</p>
+
+<pre><code>Message Archives [ ] Keep messages archived in:
+</code></pre>
+
+<p>Leave this unchecked, too. Google&rsquo;s equivalent of the Archive folder is the All
+Mail label, which stores all Mail that you&rsquo;ve ever seen, and Thunderbird&rsquo;s
+&ldquo;Archive"command seems to be doing the right thing (as in, something other than
+the "Delete&rdquo; command).</p>
+
+<pre><code>(*) Keep message drafts in: (*) Other:
+</code></pre>
+
+<p>We want to keep drafts in the Gmail Draft folder, not on a local computer, so
+from the &ldquo;Other&rdquo; drop-down, choose your Gmail account, and then the Gmail/Drafts
+folder.</p>
+
+<pre><code>(*) Keep message templates in: (*) "Templates" folder in Local Folders
+</code></pre>
+
+<p>I must admit I&rsquo;ve never used Templates. There is probably an argument for
+storing them on your Gmail account, so they are shared between all your
+installations, but Gmail doesn&rsquo;t have the concept of Templates, so you&rsquo;d have to
+create a custom label for them.</p>
+
+<h3>Composition &amp; Addressing</h3>
+
+<pre><code>[ ] Compose Messages in HTML format
+</code></pre>
+
+<p>This is where it all began. People flaunting the internet mail standards. Do us
+all a favor and don&rsquo;t perpetuate that nonsense. You&rsquo;ll also want to disable this
+if you have installed PGP encryption, because those two don&rsquo;t play well together.</p>
+
+<h3>Junk Settings</h3>
+
+<pre><code>[ ] Enable adaptive junk controls for this account
+</code></pre>
+
+<p>We should not be needing spam filters, because Gmail is doing a pretty awesome
+job at filtering out junk email. It&rsquo;s one of the major reasons why people love
+it so much. Thunderbird&rsquo;s junk filters do not integrate with the server-side
+filtering of Gmail, so it&rsquo;s better to leave everything in this section
+unchecked.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[International Characters on a US Keyboard in Windows 7]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/12/23/international-keyboard/"/>
+    <updated>2013-12-23T14:00:00+01:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/12/23/international-keyboard</id>
+    <content type="html"><![CDATA[<p>Like many programmers, I use a US keyboard layout instead of my native German
+(or Scandinavian) keyboard. This makes programming easier, because I don’t need
+to put my right hand into contortions to get at the keys for angle brackets,
+curly braces, or the backslash, and I am able to use my coworkers’computers and
+vice versa (except for those Dvorak types). But sometimes, I want to write a
+letter home, and I need the Umlauts and all that other stuff. There are four
+basic solutions to this, all of which don’t work for me, and the final one that
+I use today (skip right to the end if that is all you want to see).</p>
+
+<!-- more -->
+
+
+<h2>The Windows language bar</h2>
+
+<p>I could install three keyboard layouts, and switch between them with the Left
+Alt + Shift macro, as the Windows designers intended. Personally, I hate this,
+because it’s designed as a per-application setting, but my brain does not
+remember per-application state. The Alt-Shift combo is one that I frequently hit
+by accident, and the task bar indicator only shows you its state on hover, while
+the floating version of the language bar is a huge eyesore.</p>
+
+<h2>Key codes</h2>
+
+<p>Windows allows you to key in characters by their code point. Alt + 132 is &auml;, for
+example. I would have to learn 14 of these three-digit combinations, and they
+only work on the numeric keypad. This is a serious impediment to typing speed,
+and in fact it’s easier to remember and faster to type out the HTML entity for
+each of them. Most laptops, and my FILCO keyboard, do not have a numeric keypad,
+so that option is out for other reasons, too.</p>
+
+<h2>AllChars</h2>
+
+<p>For a very long time, I was a huge fan of
+<a href="http://allchars.zwolnet.com/">AllChars</a>, which is a small program that runs in
+the task bar and adds a &ldquo;compose&rdquo; key. So if you wanted to type an &auml;, you type
+the sequence ESC &quot; a. Sadly, this little piece of open source magic stopped
+working reliably with later versions of Windows, and it was causing very erratic
+behavior, so I had to stop doing that.</p>
+
+<h2>US-International keyboard layout</h2>
+
+<p>There is a special version of the US English keyboard layout called United
+States-International. You can install it from the Control Panel, just like you
+would install a German or Norwegian layout. In this layout, international
+(mostly Western European) characters are assigned to combinations of Right Alt +
+character, with special characters roughly located in the vicinity of
+similar-looking ASCII characters. &Auml; is Right-Alt + Q, for example.
+Alternatively, you can compose keys, because a number of keys are &ldquo;dead keys&rdquo;:
+typing ~ + n gives you &ntilde;. I don’t need those dead keys, they get in the way:
+when trying to type an apostrophe, I need to type the ‘ followed by a space, or
+I risk it being conjoined with the following character.</p>
+
+<h2>International layout without dead keys</h2>
+
+<p>Microsoft has published a tool that allows anyone to edit their own keyboard
+layout, and there is a kind soul who felt the same way that I did about the dead
+keys, and published his solution. This is the solution I use today, <a href="http://freeman2222.mywebcommunity.org/us-intnd.zip">United
+States-International (no dead
+keys)</a>. It behaves exactly
+like a US keyboard, with the exception of the Right-Alt key being a modifier to
+access the international characters. I have this set as my default keyboard
+layout on all my Windows computers.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Solved: Irfanview icons.dll on Windows 7]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/06/30/irfanview-icons-dll/"/>
+    <updated>2013-06-30T06:47:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/06/30/irfanview-icons-dll</id>
+    <content type="html"><![CDATA[<p>I have used <a href="http://www.irfanview.com">Irfanview</a> as my image viewer
+for many, many years, and one thing that it does well is customize the
+windows explorer icons for supported file types through an icons.dll
+file. There is a good explanation of how to make this work <a href="http://emilio.fobby.net/features.php?g=1">at
+emiliolab</a>.</p>
+
+<!-- more -->
+
+
+<h2>Windows 7</h2>
+
+<p>There are two problems that I had with this explanation on Windows:</p>
+
+<ol>
+<li><p>you cannot write to anywhere inside C:\Program Files (x86)
+without administrator permissions, so 7-zip fails to extract the
+icons.dll to the Plugins directory. Extract the file to the desktop
+instead and copy it manually.</p></li>
+<li><p>Irfanview needs administrator permissions to set the icon for a
+file type (it has to write to the registry). So in order to change the
+preference, start Irfanview by right-clicking it, and select &ldquo;Run as
+Administrator&rdquo;.</p></li>
+</ol>
+
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: C | Twig Technology]]></title>
+  <link href="http://www.twigtechnology.com/blog/categories/c/atom.xml" rel="self"/>
+  <link href="http://www.twigtechnology.com/"/>
+  <updated>2014-04-11T07:44:23+02:00</updated>
+  <id>http://www.twigtechnology.com/</id>
+  <author>
+    <name><![CDATA[Enno Rehling]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Type-safe Struct Wrappers in C]]></title>
+    <link href="http://www.twigtechnology.com/blog/2013/05/09/type-safe-struct-wrappers-in-c/"/>
+    <updated>2013-05-09T19:41:00+02:00</updated>
+    <id>http://www.twigtechnology.com/blog/2013/05/09/type-safe-struct-wrappers-in-c</id>
+    <content type="html"><![CDATA[<p>Lately, I find myself writing more and more code that uses void<em> pointers as
+handles to implementation-specific data. This can get confusing when there is
+more than one type of handle. Imagine we have these two types:
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="kt">void</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">HBITMAP</span><span class="p">;</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">void</span> <span class="o">*</span><span class="n">HWINDOW</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+It is then possible to assign a value of type HBITMAP to a variable of type
+HWINDOW, with no complaints from the compiler.</p>
+
+<!-- more -->
+
+
+<p>Let me show you some example code to illustrate:
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="kt">void</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">HBITMAP</span><span class="p">;</span>
+</span><span class='line'><span class="k">typedef</span> <span class="kt">void</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">HWINDOW</span><span class="p">;</span>
+</span><span class='line'><span class="n">HWINDOW</span> <span class="nf">CreateWindow</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</span><span class='line'><span class="n">HBITMAP</span> <span class="nf">CreateBitmap</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</span><span class='line'><span class="kt">void</span> <span class="nf">DestroyBitmap</span><span class="p">(</span><span class="n">HBITMAP</span><span class="p">);</span>
+</span><span class='line'><span class="kt">void</span> <span class="nf">DestroyWindow</span><span class="p">(</span><span class="n">HWINDOW</span><span class="p">);</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">HWINDOW</span> <span class="n">wnd</span> <span class="o">=</span> <span class="n">CreateWindow</span><span class="p">();</span>
+</span><span class='line'><span class="n">HBITMAP</span> <span class="n">bmp</span> <span class="o">=</span> <span class="n">CreateBitmap</span><span class="p">();</span>
+</span><span class='line'><span class="n">DestroyBitmap</span><span class="p">(</span><span class="n">wnd</span><span class="p">);</span>
+</span><span class='line'><span class="n">DestroyWindow</span><span class="p">(</span><span class="n">bmp</span><span class="p">);</span>
+</span><span class='line'><span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'><span class="o">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+The C compiler will compile this without a warning, even though I obviously
+mixed up the arguments to the Destroy calls.</p>
+
+<p>The goal of today&rsquo;s excercise is to get a warning from the compiler. While C
+does not distinguish different typedef&rsquo;s that map to the same internal type
+as multiple types, it does recognize different structs. So we&rsquo;ll define our
+handle-types like this:
+<div class='bogus-wrapper'><notextile><figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='c'><span class='line'><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span> <span class="kt">void</span> <span class="o">&lt;</span><span class="n">em</span><span class="o">&gt;</span><span class="n">ptr</span><span class="p">;</span> <span class="p">}</span> <span class="n">HBITMAP</span><span class="p">;</span>
+</span><span class='line'><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span> <span class="kt">void</span> <span class="o">&lt;/</span><span class="n">em</span><span class="o">&gt;</span><span class="n">ptr</span><span class="p">;</span> <span class="p">}</span> <span class="n">HWINDOW</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+With that change, these two are different types, and the compiler will give
+us an error message:</p>
+
+<pre><code>$ gcc -Wall -c types.c
+types.c: In function ‘main’:
+types.c:11: error: incompatible type for argument 1 of ‘DestroyBitmap’
+types.c:12: error: incompatible type for argument 1 of ‘DestroyWindow’
+</code></pre>
+
+<p>Note that these types are just as big as the void* in the struct (a struct
+causes no additional memory overhead), so copying them is no less efficient.
+Assignment works just like before, because C assigns structs by copying.</p>
+
+<p>This elegant little epiphany was brought to me by <a href="http://luminance.org/">Kevin</a>
+and Imran, who is fanatic about type-safety, and was doing this to basic types
+like int, float and char, to avoid accidental implicit conversion between them.</p>
+]]></content>
+  </entry>
+  
+</feed>
