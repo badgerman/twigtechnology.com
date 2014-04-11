@@ -3,7 +3,7 @@ layout: post
 title: "Blogging with a Raspberry Pi"
 date: 2014-02-09 23:09:00
 comments: true
-published: false
+published: true
 categories: [howto, meta, lifehack, raspi]
 
 ---

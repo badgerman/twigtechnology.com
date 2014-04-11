@@ -8,8 +8,6 @@ categories: [howto, IMAP, thunderbird, gmail, email]
 
 ---
 
-# Configuring Thunderbird (and other MUAs) for Gmail
-
 Following up on my previous post, I'm going to put what I learned to use and configure my mail software to use Gmail in a way that deals with the inherent folder/label confusion.
 
 <!-- more -->

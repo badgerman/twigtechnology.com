@@ -3,12 +3,10 @@ layout: post
 title: "Understanding Gmail's IMAP Server"
 date: 2014-02-10 08:00:00
 comments: true
-published: false
+published: true
 categories: [howto, IMAP, thunderbird, gmail, email]
 
 ---
-# Understanding Gmail's IMAP Server
-
 I recently abandoned the Gmail web interface in favor of good old mail user agents (MUA) like Thunderbird, K-9 Mail and mutt. This has been a wonderful experience all around, but there were a few settings I had to make that were not intuitive until I understood how Gmail operates. Namely, how it treats IMAP folders.
 
 <!-- more -->
