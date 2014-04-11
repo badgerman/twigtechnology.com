@@ -23,60 +23,59 @@ configuration files, my .jedrc is stored
 I prefer indentation with 4 spaces, not tabs, and do not want my
 braces to be on separate lines (1TBS):
 
-    USE_TABS = 0;
-    TAB_DEFAULT = 4;
-    C_INDENT = 4;
-    C_BRA_NEWLINE = 1;
-    C_BRACE = 0;
-    C_Colon_Offset = 0;
+	USE_TABS = 0;
+	TAB_DEFAULT = 4;
+	C_INDENT = 4;
+	C_BRA_NEWLINE = 1;
+	C_BRACE = 0;
+	C_Colon_Offset = 0;
 
 In text mode (especially when writing Makefiles), I prefer that the
 Tab key inserts a tab character instead of indenting the current line
 (the default). I also like those tab stops to be spaced 8 columns wide:
 
-    define text_mode_hook()
-    {
-        local_setkey("self_insert_cmd", "\t");
-        TAB = 8;
-    }
+	define text_mode_hook()
+	{
+	    local_setkey("self_insert_cmd", "\t");
+	    TAB = 8;
+	}
 
 ## Custom Hotkeys
 
 I prefer Home and End to Ctrl+A and Ctrl+E:
 
-  setkey("bol", "\e[1~");
-  setkey("eol", "\e[4~");
+	setkey("bol", "\e[1~");
+	setkey("eol", "\e[4~");
 
 I like to navigate with Ctrl+Cursor. Up and Down skip an entire paragraph:
 
-    setkey("backward_paragraph", "\e[A");
-    setkey("forward_paragraph",  "\e[B");
+	setkey("backward_paragraph", "\e[A");
+	setkey("forward_paragraph",  "\e[B");
 
 Getting Ctrl+Left and Ctrl+Right to skip forward and back a word
 needed a little more work, because `skip_word` and `bskip_word` behave
 poorly at the beginning and end of lines. I stole a lot of this from
 ide.sl:
 
-    setkey("ide_skip_word",      "\e[C");
-    setkey("ide_bskip_word",     "\e[D");
+	setkey("ide_skip_word",      "\e[C");
+	setkey("ide_bskip_word",     "\e[D");
+	custom_variable ("Ide_Skippable_Chars",
+	    "\n\t !\"#$%&'()*+,-./:;<=>?@[\]^{|}~");
+	define ide_bskip_word()
+	{
+	    bskip_chars (Ide_Skippable_Chars);
+	    bskip_chars ("^" + Ide_Skippable_Chars);
+	}
 
-    custom_variable ("Ide_Skippable_Chars", "\n\t !\"#$%&'()*+,-./:;<=>?@[\]^{|}~");
-
-    define ide_bskip_word()
-    {
-        bskip_chars (Ide_Skippable_Chars);
-        bskip_chars ("^" + Ide_Skippable_Chars);
-    }
-    
-    define ide_skip_word()
-    {
-        variable p = _get_point();
-        skip_chars("^" + Ide_Skippable_Chars);
-        if (_get_point() == p) {
-            skip_chars(Ide_Skippable_Chars);
-            skip_chars("^" + Ide_Skippable_Chars);
-        }
-    }
+	define ide_skip_word()
+	{
+	    variable p = _get_point();
+	    skip_chars("^" + Ide_Skippable_Chars);
+	    if (_get_point() == p) {
+	        skip_chars(Ide_Skippable_Chars);
+	        skip_chars("^" + Ide_Skippable_Chars);
+	    }
+	}
 
 Those two custom functions do the right thing. To be perfectly honest,
 I would prefer Alt+Cursor, but I cannot figure out what the code for
