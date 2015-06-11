@@ -23,3 +23,11 @@ it has changed, find it to be no longer broken, and upload it.
 You'll want to open up `%LOCALAPPDATA%\Google\MusicManager\FailureReport.txt` and
 scan this for all the files that MusicManager complained about, then fix the MBR
 headers on those. 
+
+
+**Update**: A lot of comments have pointed out that this doesn't seem
+to be a problem with the VBR headers, but that just the act of
+changing the file in any way at all is what is doing the trick. That
+sort of makes sense to me, but poses another question. If Google has
+blacklisted some files based on a content checksum, what's the reason
+for that?
