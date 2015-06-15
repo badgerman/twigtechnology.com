@@ -20,6 +20,7 @@ wrote the thing!
 Source code is available on
 [github](https://github.com/badgerman/ennodb) under a BSD style
 license.
+<!-- more -->
 
 ## Core Features 
 

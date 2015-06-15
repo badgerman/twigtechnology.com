@@ -13,6 +13,7 @@ EnnoDB 1.3 fixes a critical bug and introduces several new convenience features 
 * configuration through /etc/ennodb/ennodb.ini
 * added a read-only mode in which no new log entries are written
 * added -v option to print version number
+<!-- more -->
 
 ## server migration
 
