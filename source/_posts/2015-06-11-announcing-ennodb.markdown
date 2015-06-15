@@ -4,7 +4,7 @@ title: "Announcing EnnoDB"
 date: 2015-06-11 22:30
 comments: true
 published: true
-categories: [c, eressea, software, ennodb, fastcgi]
+categories: [c, software, ennodb, fastcgi]
 ---
 
 Today I am announcing the first official version of EnnoDB, a new
