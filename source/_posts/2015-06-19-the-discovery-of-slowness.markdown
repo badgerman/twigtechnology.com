@@ -7,7 +7,9 @@ published: false
 categories: [software]
 ---
 
-The longer I am in this business, the more I get convinced that you cannot make "quick fixes" to anything and call yourself a "good" programmer.
+The longer I am in this business, the more I get convinced that you
+cannot make "quick fixes" to anything and call yourself a "good"
+programmer.
 
 <!-- more -->
 
