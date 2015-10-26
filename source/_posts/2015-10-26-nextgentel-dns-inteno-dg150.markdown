@@ -7,12 +7,28 @@ published: true
 categories: [hardware, networking]
 ---
 
-Lately, my internet has been hardly working at all. I finally traced this down to the Inteno DG150 router that NextGenTel provides to its customers. It seems that occasionally, the DNS server in that box just dies and doesn’t restart. I have an additional wireless AP, two laptops, a gaming PC, two servers, a phone and a tablet, plus occasional guests hooked up to it, so I may be stressing this thing more than the average user, but restarting it twice a day was getting old, so I had to look for solutions.
+Lately, my internet has been hardly working at all. I finally traced
+this down to the Inteno DG150 router that NextGenTel provides to its
+customers. It seems that occasionally, the DNS server in that box just
+dies and doesn’t restart. I have an additional wireless AP, two
+laptops, a gaming PC, two servers, a phone and a tablet, plus
+occasional guests hooked up to it, so I may be stressing this thing
+more than the average user, but restarting it twice a day was getting
+old, so I had to look for solutions.
+
+<!-- more -->
 
 ![little guy is pretty busy](http://i.imgur.com/9ITj77Y.gif)
 
 # The Problem
-Here’s what was happening: All the computers in my network receive their IP address and DNS information through DHCP from the router. The router itself has address 10.0.0.1, and all other devices in my home are of the form 10.0.0.*. The DHCP information tells all my devices to use 10.0.0.1 as the sole DNS server, which means the router is probably relaying DNS for my ISP. In the router’s web interface, I found the NextGenTel DNS servers configured, and I made sure that they were working, but the one on the router was not:
+Here’s what was happening: All the computers in my network receive
+their IP address and DNS information through DHCP from the router. The
+router itself has address 10.0.0.1, and all other devices in my home
+are of the form 10.0.0.*. The DHCP information tells all my devices to
+use 10.0.0.1 as the sole DNS server, which means the router is
+probably relaying DNS for my ISP. In the router’s web interface, I
+found the NextGenTel DNS servers configured, and I made sure that they
+were working, but the one on the router was not:
 
 ![nslookup results](https://i.imgur.com/4BhOwtc.png)
 
