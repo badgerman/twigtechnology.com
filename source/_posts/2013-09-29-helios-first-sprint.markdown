@@ -35,7 +35,7 @@ needs to be done next, so I don't work on stuff that isn't important.
 ## What got done
 
 I have planned an aggressive
-[list of features](https://github.com/badgerman/atlantis/wiki/Helios-Game-Design-Document)
+[list of features](https://github.com/ennorehling/atlantis/wiki/Helios-Game-Design-Document)
 for Helios, and I wrote Design rationale and a task breakdown for all of them.
 This gives me material for all my future sprints until the start of the game.
 

@@ -101,6 +101,6 @@ When you've gotten this far, you can manually run `weex blog` and the blog will 
 
 ### Making rake deploy work
 
-The canonical way to deploy your blog with octopress is to call rake deploy in the octopress directory. This is achieved by modifying the Rakefile directly, and I've put the required patch in [a gist](https://gist.github.com/badgerman/8912543).
+The canonical way to deploy your blog with octopress is to call rake deploy in the octopress directory. This is achieved by modifying the Rakefile directly, and I've put the required patch in [a gist](https://gist.github.com/ennorehling/8912543).
 
 Now I can run `rake deploy` from the octopress folder and that will mirror the generated blog to the web server.

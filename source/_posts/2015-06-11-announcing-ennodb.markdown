@@ -18,7 +18,7 @@ twice before using this with mission-critical data. I wouldn't, and I
 wrote the thing!
 
 Source code is available on
-[github](https://github.com/badgerman/ennodb) under a BSD style
+[github](https://github.com/ennorehling/ennodb) under a BSD style
 license.
 <!-- more -->
 
@@ -72,7 +72,7 @@ create my own database, it would have to be called EnnoDB, as payback.
 
 Some time later, I was reading djb's paper on critbit tries, and
 decided to implement [my own C
-version](https://github.com/badgerman/critbit) of his idea for fun.
+version](https://github.com/ennorehling/critbit) of his idea for fun.
 This worked out well, and in doing so I realized that it could not
 just be used for fast prefix searches, but fast string lookups in
 general. Anyone who ever wrote a std::map<std::string, int> and

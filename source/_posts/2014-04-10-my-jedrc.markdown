@@ -15,7 +15,7 @@ highlighting, smart indenting, and just enough features to be decent
 for programming in. After years of fighting with the defaults, I have
 finally figured out the configuration I like. Like all my other
 configuration files, my .jedrc is stored
-[on github](https://github.com/badgerman/dotfiles/blob/master/.jedrc).
+[on github](https://github.com/ennorehling/dotfiles/blob/master/.jedrc).
 
 <!-- more -->
 ## Some sensible defaults for programming

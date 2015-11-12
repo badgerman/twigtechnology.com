@@ -39,5 +39,5 @@ for (q=ql,i=0;q;ql_advance(&amp;ql, &amp;i, 1)) {
     printf("%p ", ql_get(q, i));
 }
 {% endcodeblock %}
-The code is on [github](https://github.com/badgerman/quicklist) for you to
+The code is on [github](https://github.com/ennorehling/quicklist) for you to
 use as you please.

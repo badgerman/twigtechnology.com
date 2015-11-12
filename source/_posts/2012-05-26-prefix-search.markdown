@@ -18,7 +18,7 @@ prefix, just strncmp each entry. We'll benchmark that, see how well it performs,
 and use it as our baseline for a good implementation.
 
 Have a look at the [naive
-implementation](https://github.com/badgerman/critbit/blob/master/naive.c) that I
+implementation](https://github.com/ennorehling/critbit/blob/master/naive.c) that I
 wrote. Finding a needle in a haystack of a million strings takes almost no time
 at all, but building the array takes a while, so I'll just do 1000 searches,
 each for a single needle, in a set of a million strings, followed by 1000
@@ -78,7 +78,7 @@ million lookups and prefix searches instead:
 250 nanoseconds per lookup, and a microsecond per prefix-search. That's a pretty
 neat improvement of four orders of magnitude! In my next post, I am going to
 talk a little bit about the actual implementation and interface. I have published
-my source code on [github](https://github.com/badgerman/critbit).
+my source code on [github](https://github.com/ennorehling/critbit).
 
 ## Some Thoughts
 

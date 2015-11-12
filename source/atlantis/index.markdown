@@ -23,7 +23,7 @@ From (Wikipedia)[https://en.wikipedia.org/wiki/Atlantis_PbeM "Atlantis PbeM"]:
 ## Atlas
 
 Started with 18 players in April 2013, Atlas is a reboot of the original 1.0
-rules, (with some modifications)[https://github.com/badgerman/atlantis1/blob/master/rules.md].
+rules, (with some modifications)[https://github.com/ennorehling/atlantis1/blob/master/rules.md].
 This game will not be accepting any more players.
 
 ## Future Games

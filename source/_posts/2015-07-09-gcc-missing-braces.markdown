@@ -7,7 +7,7 @@ published: true
 categories: [c, software, ennodb]
 ---
 
-Today my [EnnoDB build](https://travis-ci.org/badgerman/ennodb/jobs/70185586) failed, because I compile with -Werror, and both gcc and clang complain with a warning:
+Today my [EnnoDB build](https://travis-ci.org/ennorehling/ennodb/jobs/70185586) failed, because I compile with -Werror, and both gcc and clang complain with a warning:
 
     ennodb.c:237:5: error: (near initialization for ‘myapp.data’) [-Werror=missing-braces]
 
