@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Continuous Deployment of websites with Travis CI"
-date: 2010-05-09 03:13
+date: 2016-01-08 21:16
 comments: true
 ---
 # Continuous Deployment of websites with Travis CI
