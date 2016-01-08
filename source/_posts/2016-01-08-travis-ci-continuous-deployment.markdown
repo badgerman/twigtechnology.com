@@ -59,22 +59,20 @@ directory, and make it look like this:
 	script: s/travis-build
 
 You may have noticed that the travis-build script expects a few
-environment variables to be set, among them FTP_USER and FTP_PASS for
+environment variables to be set, among them `FTP_USER` and `FTP_PASS` for
 the username and password of the account. For security reasons, we
 certainly do not want to put out FTP password into a public github
 repository, so we're using a feature of Travis that allows us to
 encrypt environment variables. To do this, you need to install the
-Travis [command line
-client](https://github.com/travis-ci/travis.rb#readme), and then run
-the following commands (insert your own password, username and ftp
-server data where appropriate):
+Travis [command line client](https://github.com/travis-ci/travis.rb#readme), 
+and then run the following commands (insert your own password,
+username and ftp server data where appropriate):
 
 	travis encrypt FTP_PASS=password --add env.matrix
 	travis encrypt FTP_USER=username --add env.matrix
 	travis encrypt FTP_SITE=ftp.mysite.com --add env.matrix
 
-Now [create an
-account](https://docs.travis-ci.com/user/getting-started/#To-get-started-with-Travis-CI%3A)
+Now [create an account](https://docs.travis-ci.com/user/getting-started/#To-get-started-with-Travis-CI%3A)
 with Travis, add your repository to the ones that it should monitor
 for building, and push all your changes. Voila! Your website is now
 automatically deployed after each push.
